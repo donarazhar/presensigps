@@ -93,17 +93,17 @@
             var map = L.map('map').setView([position.coords.latitude, position.coords.longitude], 19);
 
             // Setting Latitude Longitude Otomatis
-            var lokasi_kantor = "{{ $lok_kantor->lokasi_kantor }}";
+            var lokasi_kantor = "{{ $lok_kantor->lokasi_cabang }}";
             var lok = lokasi_kantor.split(",");
             var lat_kantor = lok[0];
             var long_kantor = lok[1];
-            var radius = {{ $lok_kantor->radius }}
+            var radius = {{ $lok_kantor->radius_cabang }}
 
 
             // Setting map
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                maxZoom: 20,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
             }).addTo(map);
             // Marker user position
             var marker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);

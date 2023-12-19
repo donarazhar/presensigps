@@ -138,16 +138,13 @@
                 <th>No</th>
                 <th>Tanggal</th>
                 <th>Jam Masuk</th>
-                <th>Foto</th>
                 <th>Jam Pulang</th>
-                <th>Foto</th>
                 <th>Keterangan</th>
                 <th>Jml Jam</th>
             </tr>
             @foreach ($presensi as $d)
                 @php
-                    $path_in = Storage::url('uploads/absensi/' . $d->foto_in);
-                    $path_out = Storage::url('uploads/absensi/' . $d->foto_out);
+
                     $jamterlambat = selisih('07:00:00', $d->jam_in);
                 @endphp
 
@@ -155,16 +152,7 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ date('d-m-Y', strtotime($d->tgl_presensi)) }}</td>
                     <td>{{ $d->jam_in }}</td>
-                    <td><img src="{{ url($path_in) }}" alt="" class="foto">
-                    </td>
                     <td>{{ $d->jam_out != null ? $d->jam_out : 'Belum Absen' }}</td>
-                    <td>
-                        @if ($d->jam_out != null)
-                            <img src="{{ url($path_out) }}" alt="" class="foto">
-                        @else
-                            <img src="{{ asset('assets/img/nofoto.png') }}" alt="" class="foto">
-                        @endif
-                    </td>
                     <td>
                         @if ($d->jam_in >= '07:00')
                             Terlambat : {{ $jamterlambat }} jam</span>

@@ -9,7 +9,7 @@
                         Anda sedang dihalaman
                     </div>
                     <h2 class="page-title">
-                        Data Karyawan
+                        Data Cabang
                     </h2>
                 </div>
 
@@ -38,7 +38,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <a href="#" class="btn btn-primary" id="btnTambahKaryawan"><svg
+                                    <a href="#" class="btn btn-primary" id="btnTambahCabang"><svg
                                             xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus"
                                             width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
                                             stroke="currentColor" fill="none" stroke-linecap="round"
@@ -51,25 +51,12 @@
                             </div>
                             <div class="row mt-2">
                                 <div class="col-12">
-                                    <form action="/karyawan" method="GET">
+                                    <form action="/cabang" method="GET">
                                         <div class="row">
-                                            <div class="col-6">
-                                                <input type="text" class="form-control" name="nama_karyawan"
-                                                    id="nama_karyawan" nameplaceholder="Nama Karyawan"
-                                                    value="{{ Request('nama_karyawan') }}">
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="form-group">
-                                                    <select name="kode_dept" id="kode_dept" class="form-select">
-                                                        <option value="">Departemen</option>
-                                                        @foreach ($departemen as $d)
-                                                            <option
-                                                                {{ Request('kode_dept') == $d->kode_dept ? 'selected' : '' }}
-                                                                value="{{ $d->kode_dept }}">
-                                                                {{ $d->nama_dept }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
+                                            <div class="col-10">
+                                                <select name="kode_cabang" id="" class="form-select">
+                                                    <option value="">Semua Cabang</option>
+                                                </select>
                                             </div>
                                             <div class="col-2">
                                                 <div class="form-group">
@@ -98,41 +85,25 @@
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
-                                                    <th>NIK</th>
-                                                    <th>Nama</th>
-                                                    <th>Jabatan</th>
-                                                    <th>No Handphone</th>
-                                                    <th>Bagian</th>
-                                                    <th>Cabang</th>
-                                                    <th>Foto</th>
+                                                    <th>Kode Cabang</th>
+                                                    <th>Nama Cabang</th>
+                                                    <th>Lokasi</th>
+                                                    <th>Radius</th>
                                                     <th>Aksi</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($karyawan as $d)
-                                                    @php
-                                                        $path = Storage::url('uploads/karyawan/' . $d->foto);
-                                                    @endphp
+                                                @foreach ($cabang as $d)
                                                     <tr>
-                                                        <td>{{ $loop->iteration + $karyawan->firstItem() - 1 }}</td>
-                                                        <td>{{ $d->nik }}</td>
-                                                        <td>{{ $d->nama_lengkap }}</td>
-                                                        <td>{{ $d->jabatan }}</td>
-                                                        <td>{{ $d->no_hp }}</td>
-                                                        <td>{{ $d->nama_dept }}</td>
+                                                        <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $d->kode_cabang }}</td>
-                                                        <td>
-                                                            @if (empty($d->foto))
-                                                                <img src="{{ asset('assets/img/nofoto.png') }}"
-                                                                    class="avatar">
-                                                            @else
-                                                                <img src="{{ url($path) }}" class="avatar">
-                                                            @endif
-                                                        </td>
+                                                        <td>{{ $d->nama_cabang }}</td>
+                                                        <td>{{ $d->lokasi_cabang }}</td>
+                                                        <td>{{ $d->radius_cabang }} meter</td>
                                                         <td>
                                                             <div class="btn-group">
                                                                 <a href="#" class="edit btn btn-info btn-sm"
-                                                                    nik="{{ $d->nik }}"><svg
+                                                                    kode_cabang="{{ $d->kode_cabang }}"><svg
                                                                         xmlns="http://www.w3.org/2000/svg"
                                                                         class="icon icon-tabler icon-tabler-pencil-bolt"
                                                                         width="24" height="24" viewBox="0 0 24 24"
@@ -146,77 +117,54 @@
                                                                         <path d="M13.5 6.5l4 4" />
                                                                         <path d="M19 16l-2 3h4l-2 3" />
                                                                     </svg></a>
-                                                                <a href="/konfigurasi/{{ $d->nik }}/setjamkerja"
-                                                                    class="btn btn-success btn-sm"
-                                                                    style="margin-left: 2px"><svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        class="icon icon-tabler icon-tabler-settings-filled"
-                                                                        width="24" height="24" viewBox="0 0 24 24"
-                                                                        stroke-width="2" stroke="currentColor"
-                                                                        fill="none" stroke-linecap="round"
-                                                                        stroke-linejoin="round">
-                                                                        <path stroke="none" d="M0 0h24v24H0z"
-                                                                            fill="none" />
-                                                                        <path
-                                                                            d="M14.647 4.081a.724 .724 0 0 0 1.08 .448c2.439 -1.485 5.23 1.305 3.745 3.744a.724 .724 0 0 0 .447 1.08c2.775 .673 2.775 4.62 0 5.294a.724 .724 0 0 0 -.448 1.08c1.485 2.439 -1.305 5.23 -3.744 3.745a.724 .724 0 0 0 -1.08 .447c-.673 2.775 -4.62 2.775 -5.294 0a.724 .724 0 0 0 -1.08 -.448c-2.439 1.485 -5.23 -1.305 -3.745 -3.744a.724 .724 0 0 0 -.447 -1.08c-2.775 -.673 -2.775 -4.62 0 -5.294a.724 .724 0 0 0 .448 -1.08c-1.485 -2.439 1.305 -5.23 3.744 -3.745a.722 .722 0 0 0 1.08 -.447c.673 -2.775 4.62 -2.775 5.294 0zm-2.647 4.919a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z"
-                                                                            stroke-width="0" fill="currentColor" />
-                                                                    </svg></a>
-                                                                <form action="karyawan/{{ $d->nik }}/delete"
+                                                                <form action="cabang/{{ $d->kode_cabang }}/delete"
                                                                     style="margin-left: 2px" method="POST">
                                                                     @csrf
                                                                     <a class="btn btn-danger btn-sm delete-confirm">
                                                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                                                            class="icon icon-tabler icon-tabler-trash"
+                                                                            class="icon icon-tabler icon-tabler-trash-filled"
                                                                             width="24" height="24"
                                                                             viewBox="0 0 24 24" stroke-width="2"
                                                                             stroke="currentColor" fill="none"
-                                                                            stroke-linecap="round"
-                                                                            stroke-linejoin="round">
+                                                                            stroke-linecap="round" stroke-linejoin="round">
                                                                             <path stroke="none" d="M0 0h24v24H0z"
                                                                                 fill="none" />
-                                                                            <path d="M4 7l16 0" />
-                                                                            <path d="M10 11l0 6" />
-                                                                            <path d="M14 11l0 6" />
                                                                             <path
-                                                                                d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                                                                d="M20 6a1 1 0 0 1 .117 1.993l-.117 .007h-.081l-.919 11a3 3 0 0 1 -2.824 2.995l-.176 .005h-8c-1.598 0 -2.904 -1.249 -2.992 -2.75l-.005 -.167l-.923 -11.083h-.08a1 1 0 0 1 -.117 -1.993l.117 -.007h16z"
+                                                                                stroke-width="0" fill="currentColor" />
                                                                             <path
-                                                                                d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                                                                d="M14 2a2 2 0 0 1 2 2a1 1 0 0 1 -1.993 .117l-.007 -.117h-4l-.007 .117a1 1 0 0 1 -1.993 -.117a2 2 0 0 1 1.85 -1.995l.15 -.005h4z"
+                                                                                stroke-width="0" fill="currentColor" />
                                                                         </svg>
                                                                     </a>
                                                                 </form>
                                                             </div>
-
                                                         </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>
-                                        {{ $karyawan->links('vendor.pagination.bootstrap-5') }}
                                     </div>
-
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 
 
-    {{-- Modal Input Karywan --}}
-    <div class="modal modal-blur fade" id="modal-inputkaryawan" tabindex="-1" role="dialog" aria-hidden="true">
+    {{-- Modal Input Cabang --}}
+    <div class="modal modal-blur fade" id="modal-inputcabang" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Data Karyawan</h5>
+                    <h5 class="modal-title">Tambah Data Cabang</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/karyawan/store" method="POST" id="frmkaryawan" enctype="multipart/form-data">
+                    <form action="/cabang/store" method="POST" id="frmcabang">
                         @csrf
                         <div class="row">
                             <div class="col-12">
@@ -232,8 +180,8 @@
                                             <path d="M17.5 10m-2.5 0a2.5 3 0 1 0 5 0a2.5 3 0 1 0 -5 0" />
                                         </svg>
                                     </span>
-                                    <input type="text" value="" class="form-control" name="nik"
-                                        id="nik" placeholder="Nomor Induk Karyawan">
+                                    <input type="text" value="" class="form-control" name="kode_cabang"
+                                        id="kode_cabang" placeholder="Kode Cabang">
                                 </div>
                             </div>
                         </div>
@@ -252,8 +200,8 @@
                                             <path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
                                         </svg>
                                     </span>
-                                    <input type="text" value="" class="form-control" name="nama_lengkap"
-                                        id="nama_lengkap" placeholder="Nama Karyawan">
+                                    <input type="text" value="" class="form-control" name="nama_cabang"
+                                        id="nama_cabang" placeholder="Nama Cabang">
                                 </div>
                             </div>
                         </div>
@@ -261,21 +209,18 @@
                             <div class="col-12">
                                 <div class="input-icon mb-3">
                                     <span class="input-icon-addon">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-user-scan" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-map"
+                                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                            stroke="currentColor" fill="none" stroke-linecap="round"
+                                            stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M10 9a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                            <path d="M4 8v-2a2 2 0 0 1 2 -2h2" />
-                                            <path d="M4 16v2a2 2 0 0 0 2 2h2" />
-                                            <path d="M16 4h2a2 2 0 0 1 2 2v2" />
-                                            <path d="M16 20h2a2 2 0 0 0 2 -2v-2" />
-                                            <path d="M8 16a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2" />
+                                            <path d="M3 7l6 -3l6 3l6 -3v13l-6 3l-6 -3l-6 3v-13" />
+                                            <path d="M9 4v13" />
+                                            <path d="M15 7v13" />
                                         </svg>
                                     </span>
-                                    <input type="text" value="" class="form-control" name="jabatan"
-                                        id="jabatan" placeholder="Jabatan">
+                                    <input type="text" value="" class="form-control" name="lokasi_cabang"
+                                        id="lokasi_cabang" placeholder="Latitude Longitude Cabang">
                                 </div>
                             </div>
                         </div>
@@ -284,47 +229,17 @@
                                 <div class="input-icon mb-3">
                                     <span class="input-icon-addon">
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-device-mobile" width="24"
+                                            class="icon icon-tabler icon-tabler-circle-letter-r" width="24"
                                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                             fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path
-                                                d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14z" />
-                                            <path d="M11 4h2" />
-                                            <path d="M12 17v.01" />
+                                            <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                            <path d="M10 12h2a2 2 0 1 0 0 -4h-2v8m4 0l-3 -4" />
                                         </svg>
                                     </span>
-                                    <input type="text" value="" class="form-control" name="no_hp"
-                                        id="no_hp" placeholder="Nomor Handphone">
+                                    <input type="text" value="" class="form-control" name="radius_cabang"
+                                        id="radius_cabang" placeholder="Radius Cabang">
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <select name="kode_dept" id="kode_dept" class="form-select">
-                                    <option value="">Departemen</option>
-                                    @foreach ($departemen as $d)
-                                        <option value="{{ $d->kode_dept }}">
-                                            {{ $d->nama_dept }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <select name="kode_cabang" id="kode_cabang" class="form-select">
-                                    <option value="">Cabang</option>
-                                    @foreach ($cabang as $d)
-                                        <option value="{{ $d->kode_cabang }}">
-                                            {{ $d->nama_cabang }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <div class="form-label">Foto Profile</div>
-                                <input type="file" name="foto" class="form-control">
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -350,12 +265,12 @@
         </div>
     </div>
 
-    {{-- Modal Edit Karywan --}}
-    <div class="modal modal-blur fade" id="modal-editkaryawan" tabindex="-1" role="dialog" aria-hidden="true">
+    {{-- Modal Edit Cabang --}}
+    <div class="modal modal-blur fade" id="modal-editcabang" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Data Karyawan</h5>
+                    <h5 class="modal-title">Edit Data Cabang</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="loadeditform">
@@ -365,33 +280,33 @@
     </div>
 @endsection
 
-{{-- JQuery Modal Input Karyawan --}}
+{{-- JQuery Modal Input Cabang --}}
 @push('myscript')
     <script>
         $(function() {
-            // Modal Tambah Karyawan
-            $("#btnTambahKaryawan").click(function() {
+            // Modal Tambah Cabang
+            $("#btnTambahCabang").click(function() {
                 // alert('test');
-                $("#modal-inputkaryawan").modal("show");
+                $("#modal-inputcabang").modal("show");
             });
 
-            // Modal Edit Karyawan
+            // Modal Edit Cabang
             $(".edit").click(function() {
-                var nik = $(this).attr('nik');
+                var kode_cabang = $(this).attr('kode_cabang');
                 $.ajax({
                     type: 'POST',
-                    url: '/karyawan/edit',
+                    url: '/cabang/edit',
                     cache: false,
                     data: {
                         _token: "{{ csrf_token() }}",
-                        nik: nik
+                        kode_cabang: kode_cabang
                     },
                     success: function(respond) {
                         $('#loadeditform').html(respond);
                     }
                 });
-                // alert(nik);
-                $("#modal-editkaryawan").modal("show");
+                // alert(kode_cabang);
+                $("#modal-editcabang").modal("show");
             });
 
             $(".delete-confirm").click(function(e) {
@@ -417,61 +332,50 @@
                 });
             });
 
-            $("#frmkaryawan").submit(function() {
-                var nik = $("#nik").val();
-                var nama_lengkap = $("#nama_lengkap").val();
-                var jabatan = $("#jabatan").val();
-                var no_hp = $("#no_hp").val();
-                var kode_dept = $("#frmkaryawan").find("#kode_dept").val();
-                var kode_cabang = $("#frmkaryawan").find("#kode_cabang").val();
-                if (nik == "") {
+            $("#frmcabang").submit(function() {
+                var kode_cabang = $("#kode_cabang").val();
+                var nama_cabang = $("#nama_cabang").val();
+                var lokasi_cabang = $("#lokasi_cabang").val();
+                var radius_cabang = $("#radius_cabang").val();
+
+                if (kode_cabang == "") {
                     Swal.fire({
                         title: 'Warning!',
-                        text: 'Nomor Induk Karyawan Harus Diisi',
+                        text: 'Kode Cabang Harus Diisi',
                         icon: 'warning',
                         confirmButtonText: 'OK'
                     }).then((result) => {
-                        $("#nik").focus();
+                        $("#kode_cabang").focus();
                     });
                     return false;
-                } else if (nama_lengkap == "") {
+                } else if (nama_cabang == "") {
                     Swal.fire({
                         title: 'Warning!',
-                        text: 'Nama Lengkap Harus Diisi',
+                        text: 'Nama Cabang Harus Diisi',
                         icon: 'warning',
                         confirmButtonText: 'OK'
                     }).then((result) => {
-                        $("#nama_lengkap").focus();
+                        $("#nama_cabang").focus();
                     });
                     return false;
-                } else if (jabatan == "") {
+                } else if (lokasi_cabang == "") {
                     Swal.fire({
                         title: 'Warning!',
-                        text: 'Jabatan Harus Diisi',
+                        text: 'Latitude Longitude Cabang Harus Diisi',
                         icon: 'warning',
                         confirmButtonText: 'OK'
                     }).then((result) => {
-                        $("#jabatan").focus();
+                        $("#lokasi_cabang").focus();
                     });
                     return false;
-                } else if (no_hp == "") {
+                } else if (radius_cabang == "") {
                     Swal.fire({
                         title: 'Warning!',
-                        text: 'No Handphone Harus Diisi',
+                        text: 'Radius Cabang Harus Diisi',
                         icon: 'warning',
                         confirmButtonText: 'OK'
                     }).then((result) => {
-                        $("#no_hp").focus();
-                    });
-                    return false;
-                } else if (kode_dept == "") {
-                    Swal.fire({
-                        title: 'Warning!',
-                        text: 'Departemen Harus Diisi',
-                        icon: 'warning',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        $("#kode_dept").focus();
+                        $("#radius_cabang").focus();
                     });
                     return false;
                 }

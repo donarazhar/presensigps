@@ -1,6 +1,20 @@
 @extends('layouts.presensi')
 @section('content')
+    <style>
+        .logout {
+            position: absolute;
+            color: white;
+            font-size: 25px;
+            text-decoration: none;
+            right: 20px;
+        }
+
+        .logout:hover {
+            color: white;
+        }
+    </style>
     <div class="section" id="user-section">
+        <a href="/proseslogout" class="logout"><ion-icon name="exit-outline"></ion-icon></a>
         <div id="user-detail">
             <div class="avatar">
                 @if (!empty(Auth::guard('karyawan')->user()->foto))
@@ -16,6 +30,7 @@
             <div id="user-info">
                 <h2 id="user-name">{{ Auth::guard('karyawan')->user()->nama_lengkap }}</h2>
                 <span id="user-role">{{ Auth::guard('karyawan')->user()->jabatan }}</span>
+                <span id="user-role">({{ Auth::guard('karyawan')->user()->kode_cabang }})</span>
             </div>
         </div>
     </div>
@@ -138,7 +153,7 @@
                     <div class="card">
                         <div class="card-body text-center" style="padding: 12px 12px !important; line-height: 0.8rem">
                             <span class="badge bg-success"
-                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{$rekapizin->jmlizin}}</span>
+                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekapizin->jmlizin }}</span>
                             <ion-icon name="newspaper-outline" style="font-size: 1.6rem" class="text-success">
                             </ion-icon> <span style="font-size: 0.8rem; font-weight:500">Izin</span>
                         </div>
@@ -148,7 +163,7 @@
                     <div class="card">
                         <div class="card-body text-center" style="padding: 12px 12px !important;line-height: 0.8rem">
                             <span class="badge bg-warning"
-                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{$rekapizin->jmlsakit}}</span>
+                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekapizin->jmlsakit }}</span>
                             <ion-icon name="medkit-outline" style="font-size: 1.6rem" class="text-warning">
                             </ion-icon> <span style="font-size: 0.8rem; font-weight:500">Sakit</span>
                         </div>

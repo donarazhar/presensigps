@@ -197,7 +197,7 @@
                                         </svg>
                                     </span>
                                     <input type="text" value="" class="form-control" name="nama_dept"
-                                        id="nama_dept" placeholder="Nama Departemen">
+                                        id="nama_depart" placeholder="Nama Departemen">
                                 </div>
                             </div>
                         </div>
@@ -293,15 +293,26 @@
 
             $("#frmdepartemen").submit(function() {
                 var kode_dept = $("#kode_dept").val();
-                var nama_dept = $("#nama_dept").val();
+                var nama_depart = $("#nama_depart").val();
+
                 if (kode_dept == "") {
                     Swal.fire({
                         title: 'Warning!',
-                        text: 'Nomor Induk Departemen Harus Diisi',
+                        text: 'Kode Departemen Harus Diisi',
                         icon: 'warning',
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         $("#kode_dept").focus();
+                    });
+                    return false;
+                } else if (nama_depart == "") {
+                    Swal.fire({
+                        title: 'Warning!',
+                        text: 'Nama Departemen Harus Diisi',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        $("#nama_depart").focus();
                     });
                     return false;
                 }
