@@ -75,8 +75,15 @@ class KaryawanController extends Controller
                 return Redirect::back()->with(['success' => 'Data Berhasil Disimpan']);
             }
         } catch (\Exception $e) {
+            // dd($e);
+
+            // validasi NIK sudah ada di database
             if ($e->getCode() == 23000) {
-                $message = "Data dengan NIK (" . $nik . ") Sudah Ada";
+                $message = " Data dengan NIK (" . $nik . ") Sudah Ada";
+
+                // validasi NIK lebih dari 5 karakter
+            } else if ($e->getCode() == 22001) {
+                $message = " NIK tidak boleh lebih dari 5 karakter (" . $nik . ")";
             }
             return Redirect::back()->with(['warning' => 'Data Gagal Disimpan' . $message]);
         }

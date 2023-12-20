@@ -125,7 +125,8 @@
                                 </div>
                                 <div class="presencedetail">
                                     <h4 class="presencetitle">Pulang</h4>
-                                    <span>{{ $presensihariini != null && $presensihariini->jam_out != null ? $presensihariini->jam_out : 'Belum Absen' }}</span>
+                                    <span>{{ $presensihariini != null && $presensihariini->jam_out != null ? $presensihariini->jam_out : 'Belum Absen' }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -189,19 +190,20 @@
                 <ul class="nav nav-tabs style1" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" data-toggle="tab" href="#home" role="tab">
-                            Bulan Ini
+                            Presensi Pribadi
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#profile" role="tab">
-                            Leaderboard
+                            Presensi Hari Ini
                         </a>
                     </li>
                 </ul>
             </div>
             <div class="tab-content mt-2" style="margin-bottom:100px;">
                 <div class="tab-pane fade show active" id="home" role="tabpanel">
-                    <ul class="listview image-listview">
+
+                    {{-- <ul class="listview image-listview">
                         @foreach ($historibulanini as $d)
                             @php
                                 $path = Storage::url('uploads/absensi/' . $d->foto_in);
@@ -232,9 +234,76 @@
                                 </div>
                             </li>
                         @endforeach
-                    </ul>
-                </div>
+                    </ul> --}}
+                    <style>
+                        .historicontent {
+                            display: flex;
+                        }
 
+                        .datapresensi {
+                            margin-left: 10px;
+                        }
+                    </style>
+                    @foreach ($historibulanini as $d)
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="historicontent">
+                                    <div class="iconpresensi">
+                                        <div class="avatar">
+                                            @if (!empty(Auth::guard('karyawan')->user()->foto))
+                                                @php
+                                                    $path = Storage::url('uploads/karyawan/' . Auth::guard('karyawan')->user()->foto);
+                                                @endphp
+                                                <img src="{{ url($path) }}" alt="avatar"
+                                                    class="imaged w32 rounded">
+                                            @else
+                                                <img src="assets/img/sample/avatar/avatar1.jpg" alt="avatar"
+                                                    class="imaged w32 rounded">
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="datapresensi">
+                                        <h3 style="line-height: 3px">{{ $d->nama_jam_kerja }}</h3>
+                                        <h4 style="margin: 0px !important">
+                                            {{ date('d-m-Y', strtotime($d->tgl_presensi)) }}</h4>
+                                        <span>
+                                            {!! $d->jam_in != null ? date('H:i', strtotime($d->jam_in)) : '<span class="text-danger">Belum Absen</span>' !!}
+                                        </span>
+                                        <span>
+                                            {!! $d->jam_out != null
+                                                ? '-' . date('H:i', strtotime($d->jam_out))
+                                                : '<span class="text-danger">- Belum Absen</span>' !!}
+                                        </span><br>
+
+                                        <div id="keterangan">
+                                            @php
+                                                // Jam ketika dia Absen
+                                                $jam_in = date('H:i', strtotime($d->jam_in));
+                                                // Jam Jadwal masuk
+                                                $jam_masuk = date('H:i', strtotime($d->jam_masuk));
+
+                                                $jadwal_jam_masuk = $d->tgl_presensi . '' . $jam_masuk;
+                                                $jam_presensi = $d->tgl_presensi . '' . $jam_in;
+                                            @endphp
+                                            @if ($jam_in > $jam_masuk)
+                                                @php
+                                                    $jmlterlambat = hitungjamterlambat($jadwal_jam_masuk, $jam_presensi);
+
+                                                @endphp
+                                                <span class="danger">Telat:
+                                                    {{ $jmlterlambat }} menit</span>
+                                            @else
+                                                <span style="color: green">On Time</span>
+                                            @endif
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+
+                </div>
                 <div class="tab-pane fade" id="profile" role="tabpanel">
                     <ul class="listview image-listview">
                         @foreach ($leaderboard as $e)

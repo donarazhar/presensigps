@@ -325,6 +325,10 @@
 @push('myscript')
     <script>
         $(function() {
+            // Validasi text inputan
+            $("#awal_jam_masuk, #jam_masuk, #akhir_jam_masuk, #jam_pulang").mask("00:00");
+
+
             // Modal Tambah JK
             $("#btnTambahJK").click(function() {
                 // alert('test');

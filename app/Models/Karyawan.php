@@ -14,6 +14,10 @@ class Karyawan extends Authenticatable
 
     protected $table = "karyawan";
     protected $primaryKey = "nik";
+
+    // Agar tanda string -," muncul di datatable
+    // public $incrementing = false;
+
     protected $fillable = [
         'nik',
         'nama_lengkap',

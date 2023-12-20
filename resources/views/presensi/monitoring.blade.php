@@ -57,7 +57,8 @@
                                             <th>No</th>
                                             <th>NIk</th>
                                             <th>Nama Karyawan</th>
-                                            <th>Departemen</th>
+                                            <th>Dep</th>
+                                            <th>Jadwal</th>
                                             <th>Jam Masuk</th>
                                             <th>Foto</th>
                                             <th>Jam Pulang</th>

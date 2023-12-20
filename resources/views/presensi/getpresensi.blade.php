@@ -26,7 +26,10 @@
         <td>{{ $loop->iteration }}</td>
         <td>{{ $d->nik }}</td>
         <td>{{ $d->nama_lengkap }}</td>
-        <td>{{ $d->nama_dept }}</td>
+        <td>{{ $d->kode_dept }}</td>
+        <td>{{ $d->nama_jam_kerja }} ({{ date('H:i', strtotime($d->jam_masuk)) }} s/d
+            {{ date('H:i', strtotime($d->jam_pulang)) }})
+        </td>
         <td>{{ $d->jam_in }}</td>
         <td>
             <img src="{{ url($foto_in) }}" class="avatar">
@@ -46,13 +49,13 @@
             @endif
         </td>
         <td>
-            @if ($d->jam_in >= '07:00')
+            @if ($d->jam_in >= $d->jam_masuk)
                 @php
-                    $jamterlambat = selisih('07:00:00', $d->jam_in);
+                    $jamterlambat = selisih($d->jam_masuk, $d->jam_in);
                 @endphp
-                <span class="badge bg-danger text-bg-dark">Terlambat : {{ $jamterlambat }} jam</span>
+                <span class="badge bg-danger text-bg-dark">Telat ({{ $jamterlambat }} menit)</span>
             @else
-                <span class="badge bg-success text-bg-dark">Tepat Waktu</span>
+                <span class="badge bg-success text-bg-dark">On Time</span>
             @endif
         </td>
         <td>

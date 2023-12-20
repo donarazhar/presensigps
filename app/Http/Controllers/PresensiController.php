@@ -80,11 +80,13 @@ class PresensiController extends Controller
 
         $jarak = $this->distance($latitudekantor, $longitudekantor, $latitudeuser, $longitudeuser);
         $radius = round($jarak["meters"]);
-        //Mendapatkan nama hari pada dashboard absen karyawan 
+
+        //Cek jam kerja karyawan
         $namahari = $this->gethari();
         $jamkerja = DB::table('konfigurasi_jamkerja')->where('nik', $nik)
             ->join('jam_kerja', 'konfigurasi_jamkerja.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
             ->where('hari', $namahari)->first();
+
 
         $cek = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->count();
 
@@ -140,7 +142,8 @@ class PresensiController extends Controller
                         'tgl_presensi' => $tgl_presensi,
                         'jam_in' => $jam,
                         'foto_in' => $fileName,
-                        'lokasi_in' => $lokasi
+                        'lokasi_in' => $lokasi,
+                        'kode_jam_kerja' => $jamkerja->kode_jam_kerja
 
                     ];
                     $simpan = DB::table('presensi')->insert($data);
@@ -285,7 +288,8 @@ class PresensiController extends Controller
     {
         $tanggal = $request->tanggal;
         $presensi = DB::table('presensi')
-            ->select('presensi.*', 'nama_lengkap', 'nama_dept')
+            ->select('presensi.*', 'nama_lengkap', 'karyawan.kode_dept', 'nama_dept', 'jam_masuk', 'nama_jam_kerja', 'jam_masuk', 'jam_pulang')
+            ->leftJoin('jam_kerja', 'presensi.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
             ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
             ->join('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
             ->where('tgl_presensi', $tanggal)
@@ -324,6 +328,7 @@ class PresensiController extends Controller
             ->first();
 
         $presensi = DB::table('presensi')
+            ->leftJoin('jam_kerja', 'presensi.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
             ->where('nik', $nik)
             ->whereRaw('MONTH(tgl_presensi)="' . $bulan . '"')
             ->whereRaw('YEAR(tgl_presensi)="' . $tahun . '"')
@@ -357,7 +362,7 @@ class PresensiController extends Controller
         $tahun = $request->tahun;
         $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         $rekap = DB::table('presensi')
-            ->selectRaw('presensi.nik, nama_lengkap, 
+            ->selectRaw('presensi.nik, nama_lengkap, jam_masuk, jam_pulang,
                     MAX(IF(DAY(tgl_presensi)=1, CONCAT(jam_in, "-",IFNULL(jam_out,"00:00:00")), "")) as tgl_1,
                     MAX(IF(DAY(tgl_presensi)=2, CONCAT(jam_in, "-",IFNULL(jam_out,"00:00:00")), "")) as tgl_2,
                     MAX(IF(DAY(tgl_presensi)=3, CONCAT(jam_in, "-",IFNULL(jam_out,"00:00:00")), "")) as tgl_3,
@@ -390,9 +395,10 @@ class PresensiController extends Controller
                     MAX(IF(DAY(tgl_presensi)=30, CONCAT(jam_in, "-",IFNULL(jam_out,"00:00:00")), "")) as tgl_30,
                     MAX(IF(DAY(tgl_presensi)=31, CONCAT(jam_in, "-",IFNULL(jam_out,"00:00:00")), "")) as tgl_31')
             ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
+            ->leftJoin('jam_kerja', 'presensi.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
             ->whereRaw('MONTH(tgl_presensi)="' . $bulan . '"')
             ->whereRaw('YEAR(tgl_presensi)="' . $tahun . '"')
-            ->groupByRaw('presensi.nik,nama_lengkap')
+            ->groupByRaw('presensi.nik,nama_lengkap, jam_masuk,jam_pulang')
             ->get();
 
         if (isset($_POST['exportexcel'])) {

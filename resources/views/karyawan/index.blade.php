@@ -232,8 +232,8 @@
                                             <path d="M17.5 10m-2.5 0a2.5 3 0 1 0 5 0a2.5 3 0 1 0 -5 0" />
                                         </svg>
                                     </span>
-                                    <input type="text" value="" class="form-control" name="nik"
-                                        id="nik" placeholder="Nomor Induk Karyawan">
+                                    <input type="text" maxlength="5" value="" class="form-control"
+                                        name="nik" id="nik" placeholder="Nomor Induk Karyawan">
                                 </div>
                             </div>
                         </div>
@@ -369,6 +369,11 @@
 @push('myscript')
     <script>
         $(function() {
+            // validasi menggunakan Jquery Mask Plugin
+            // validasi Tidak boleh mengetikkan spasi
+            $("#nik").mask('00000');
+            // Handphone harus angka
+            $("#no_hp").mask('0000-0000-00000');
             // Modal Tambah Karyawan
             $("#btnTambahKaryawan").click(function() {
                 // alert('test');
