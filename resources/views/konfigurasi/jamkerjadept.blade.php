@@ -10,7 +10,7 @@
                         Anda sedang dihalaman
                     </div>
                     <h2 class="page-title">
-                        Konfigurasi Jam Kerja Departemen
+                        JK Per Departemen
                     </h2>
                 </div>
 

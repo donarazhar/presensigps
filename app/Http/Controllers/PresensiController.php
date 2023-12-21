@@ -52,14 +52,30 @@ class PresensiController extends Controller
         //Mendapatkan nama hari pada dashboard absen karyawan 
         $namahari = $this->gethari();
         $nik = Auth::guard('karyawan')->user()->nik;
+        //Mengecek karyawan tersebut di Departemen apa
+        $kode_dept = Auth::guard('karyawan')->user()->kode_dept;
         $cek = DB::table('presensi')->where('tgl_presensi', $hariini)->where('nik', $nik)->count();
         // $lok_kantor = DB::table('konfigurasi_lokasi')->where('id', 1)->first();
         $kode_cabang = Auth::guard('karyawan')->user()->kode_cabang;
         $lok_kantor = DB::table('cabang')->where('kode_cabang', $kode_cabang)->first();
-        // Mendapatkan jam kerja sesuai dengan nik yang login
-        $jamkerja = DB::table('konfigurasi_jamkerja')->where('nik', $nik)
+
+        // Mendapatkan jam kerja perorangan sesuai dengan nik yang login
+        $jamkerja = DB::table('konfigurasi_jamkerja')
             ->join('jam_kerja', 'konfigurasi_jamkerja.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
+            ->where('nik', $nik)
             ->where('hari', $namahari)->first();
+
+
+        if ($jamkerja == null) {
+            // Mendapatkan jam kerja perdepartemen sesuai dengan nik yang login
+            $jamkerja = DB::table('konfigurasi_jk_dept_detail')
+                ->join('konfigurasi_jk_dept', 'konfigurasi_jk_dept_detail.kode_jk_dept', '=', 'konfigurasi_jk_dept.kode_jk_dept')
+                ->join('jam_kerja', 'konfigurasi_jk_dept_detail.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
+                ->where('kode_dept', $kode_dept)
+                ->where('kode_cabang', $kode_cabang)
+                ->where('hari', $namahari)->first();
+        }
+
 
         if ($jamkerja == null) {
             return view('presensi.notifjadwal');
@@ -72,6 +88,8 @@ class PresensiController extends Controller
     {
         $nik = Auth::guard('karyawan')->user()->nik;
         $kode_cabang = Auth::guard('karyawan')->user()->kode_cabang;
+        //Mengecek karyawan tersebut di Departemen apa
+        $kode_dept = Auth::guard('karyawan')->user()->kode_dept;
         $tgl_presensi = date("Y-m-d");
         $jam = date("H:i:s");
         $lok_kantor = DB::table('cabang')->where('kode_cabang', $kode_cabang)->first();
@@ -88,9 +106,22 @@ class PresensiController extends Controller
 
         //Cek jam kerja karyawan
         $namahari = $this->gethari();
-        $jamkerja = DB::table('konfigurasi_jamkerja')->where('nik', $nik)
+        // Mendapatkan jam kerja perorangan sesuai dengan nik yang login
+        $jamkerja = DB::table('konfigurasi_jamkerja')
             ->join('jam_kerja', 'konfigurasi_jamkerja.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
+            ->where('nik', $nik)
             ->where('hari', $namahari)->first();
+
+
+        if ($jamkerja == null) {
+            // Mendapatkan jam kerja perdepartemen sesuai dengan nik yang login
+            $jamkerja = DB::table('konfigurasi_jk_dept_detail')
+                ->join('konfigurasi_jk_dept', 'konfigurasi_jk_dept_detail.kode_jk_dept', '=', 'konfigurasi_jk_dept.kode_jk_dept')
+                ->join('jam_kerja', 'konfigurasi_jk_dept_detail.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
+                ->where('kode_dept', $kode_dept)
+                ->where('kode_cabang', $kode_cabang)
+                ->where('hari', $namahari)->first();
+        }
 
 
         $cek = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->count();
@@ -426,10 +457,10 @@ class PresensiController extends Controller
     {
 
         $query = PengajuanIzin::query();
-        $query->select('id', 'tgl_izin', 'pengajuan_izin.nik', 'nama_lengkap', 'jabatan', 'status', 'status_approved', 'keterangan');
+        $query->select('id', 'tgl_izin_dari', 'pengajuan_izin.nik', 'nama_lengkap', 'jabatan', 'status', 'status_approved', 'keterangan');
         $query->join('karyawan', 'pengajuan_izin.nik', '=', 'karyawan.nik');
         if (!empty($request->dari) && !empty($request->sampai)) {
-            $query->whereBetween('tgl_izin', [$request->dari, $request->sampai]);
+            $query->whereBetween('tgl_izin_dari', [$request->dari, $request->sampai]);
         }
         if (!empty($request->nik)) {
             $query->where('pengajuan_izin.nik', $request->nik);
@@ -440,7 +471,7 @@ class PresensiController extends Controller
         if ($request->status_approved === '0' || $request->status_approved === '1' || $request->status_approved === '2') {
             $query->where('status_approved', $request->status_approved);
         }
-        $query->orderBy('tgl_izin', 'desc');
+        $query->orderBy('tgl_izin_dari', 'desc');
         $izinsakit = $query->paginate(2);
         $izinsakit->appends($request->all());
 
@@ -480,7 +511,7 @@ class PresensiController extends Controller
 
         $cek = DB::table('pengajuan_izin')
             ->where('nik', $nik)
-            ->where('tgl_izin', $tgl_izin)
+            ->where('tgl_izin_dari', $tgl_izin)
             ->count();
         return $cek;
     }

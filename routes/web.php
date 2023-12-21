@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
+use App\Http\Controllers\IzinabsenController;
+use App\Http\Controllers\IzinsakitController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KonfigurasiController;
 use App\Http\Controllers\PresensiController;
@@ -52,12 +54,18 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('/presensi/histori', [PresensiController::class, 'histori']);
     Route::post('/gethistori', [PresensiController::class, 'gethistori']);
 
-    // Izin
+    // Halaman Izin Sakit Cuti
     Route::get('/presensi/izin', [PresensiController::class, 'izin']);
     Route::get('/presensi/buatizin', [PresensiController::class, 'buatizin']);
     Route::post('/presensi/storeizin', [PresensiController::class, 'storeizin']);
-
     Route::post('/presensi/cekpengajuanizin', [PresensiController::class, 'cekpengajuanizin']);
+
+    // Izin Absen
+    Route::get('/izinabsen', [IzinabsenController::class, 'create']);
+    Route::post('/izinabsen/store', [IzinabsenController::class, 'store']);
+    // Izin Sakit
+    Route::get('/izinsakit', [IzinsakitController::class, 'create']);
+    Route::post('/izinsakit/store', [IzinsakitController::class, 'store']);
 });
 
 Route::middleware(['auth:user'])->group(function () {

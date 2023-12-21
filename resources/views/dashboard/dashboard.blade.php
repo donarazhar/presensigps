@@ -203,38 +203,6 @@
             <div class="tab-content mt-2" style="margin-bottom:100px;">
                 <div class="tab-pane fade show active" id="home" role="tabpanel">
 
-                    {{-- <ul class="listview image-listview">
-                        @foreach ($historibulanini as $d)
-                            @php
-                                $path = Storage::url('uploads/absensi/' . $d->foto_in);
-                            @endphp
-
-                            <li>
-                                <div class="item">
-                                    <div class="icon-box bg-primary">
-                                        <div class="avatar">
-                                            @if (!empty(Auth::guard('karyawan')->user()->foto))
-                                                @php
-                                                    $path = Storage::url('uploads/karyawan/' . Auth::guard('karyawan')->user()->foto);
-                                                @endphp
-                                                <img src="{{ url($path) }}" alt="avatar"
-                                                    class="imaged w32 rounded">
-                                            @else
-                                                <img src="assets/img/sample/avatar/avatar1.jpg" alt="avatar"
-                                                    class="imaged w32 rounded">
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="in">
-                                        <div>{{ date('d-m-Y', strtotime($d->tgl_presensi)) }}</div>
-                                        <span class="badge badge-success">{{ $d->jam_in }}</span>
-                                        <span
-                                            class="badge badge-danger">{{ $presensihariini != null && $d->jam_out != null ? $d->jam_out : 'Belum Absen' }}</span>
-                                    </div>
-                                </div>
-                            </li>
-                        @endforeach
-                    </ul> --}}
                     <style>
                         .historicontent {
                             display: flex;
@@ -245,7 +213,7 @@
                         }
                     </style>
                     @foreach ($historibulanini as $d)
-                        <div class="card">
+                        <div class="card mb-1">
                             <div class="card-body">
                                 <div class="historicontent">
                                     <div class="iconpresensi">

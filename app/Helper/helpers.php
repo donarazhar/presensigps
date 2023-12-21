@@ -32,3 +32,12 @@ function hitungjamterlambatdesimal($jam_masuk, $jam_presensi)
     $desimalterlambat = ROUND(($menitterlambat / 60), 2);
     return $desimalterlambat;
 }
+
+function hitunghari($tanggal_mulai, $tanggal_akhir)
+{
+    $tanggal1 = date_create($tanggal_mulai);
+    $tanggal2 = date_create($tanggal_akhir);
+    $diff = date_diff($tanggal1, $tanggal2);
+
+    return $diff->days + 1;
+}

@@ -10,7 +10,7 @@
                         Anda sedang dihalaman
                     </div>
                     <h2 class="page-title">
-                        Konfigurasi Jam Kerja
+                        Setting JK
                     </h2>
                 </div>
 
