@@ -112,4 +112,13 @@ Route::middleware(['auth:user'])->group(function () {
     Route::post('/cabang/edit', [CabangController::class, 'edit']);
     Route::post('/cabang/{kode_cabang}/update', [CabangController::class, 'update']);
     Route::post('/cabang/{kode_cabang}/delete', [CabangController::class, 'delete']);
+
+    // KOnfigurasi Jam kerja departemen
+    Route::get('/konfigurasi/jamkerjadept', [KonfigurasiController::class, 'jamkerjadept']);
+    Route::get('/konfigurasi/jamkerjadept/{kode_jk_dept}/editjamkerjadept', [KonfigurasiController::class, 'editjamkerjadept']);
+    Route::get('/konfigurasi/jamkerjadept/{kode_jk_dept}/showjamkerjadept', [KonfigurasiController::class, 'showjamkerjadept']);
+    Route::get('/konfigurasi/jamkerjadept/{kode_jk_dept}/deletejamkerjadept', [KonfigurasiController::class, 'deletejamkerjadept']);
+    Route::get('/konfigurasi/setjamkerjadept', [KonfigurasiController::class, 'setjamkerjadept']);
+    Route::post('/konfigurasi/storesetjamkerjadept', [KonfigurasiController::class, 'storesetjamkerjadept']);
+    Route::post('/konfigurasi/{kode_jk_dept}/updatesetjamkerjadept', [KonfigurasiController::class, 'updatesetjamkerjadept']);
 });

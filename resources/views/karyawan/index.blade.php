@@ -185,7 +185,6 @@
                                                                     </a>
                                                                 </form>
                                                             </div>
-
                                                         </td>
                                                     </tr>
                                                 @endforeach
