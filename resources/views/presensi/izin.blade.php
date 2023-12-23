@@ -59,7 +59,8 @@
                         $status = 'Not Found';
                     }
                 @endphp
-                <div class="card mb-1">
+                <div class="card mb-1 card_izin" kode_izin="{{ $d->kode_izin }}" data-toggle="modal"
+                    data-target="#actionSheetIconed">
                     <div class="card-body">
                         <div class="historicontent">
                             <div class="iconpresensi">
@@ -67,10 +68,12 @@
                                     <ion-icon name="person-add-outline" style="font-size: 36px; color:#1e74fd;"></ion-icon>
                                 @elseif ($d->status == 's')
                                     <ion-icon name="medkit-outline" style="font-size: 36px; color:#fd1e1e;"></ion-icon>
+                                @elseif ($d->status == 'c')
+                                    <ion-icon name="calendar-outline" style="font-size: 36px; color:#ffae00;"></ion-icon>
                                 @endif
                             </div>
                             <div class="datapresensi">
-                                <h3 style="line-height: 3px">{{ $status }} selama
+                                <h3 style="line-height: 3px">{{ $status }} :
                                     {{ hitunghari($d->tgl_izin_dari, $d->tgl_izin_sampai) }} Hari
                                 </h3>
                                 <small>{{ date('d-m-Y', strtotime($d->tgl_izin_dari)) }} s/d
@@ -78,6 +81,10 @@
                                 <p>
                                     {{ $d->keterangan }}
                                     <br>
+                                    @if ($d->status == 'c')
+                                        <span class="badge badge-warning">{{ $d->nama_cuti }}</span>
+                                        <br>
+                                    @endif
                                     @if (!empty($d->doc_sid))
                                         <span style="color: #1e74fd;">
                                             <ion-icon name="document-attach-outline"></ion-icon>
@@ -118,9 +125,55 @@
                 <p>Sakit</p>
             </a>
             <a class="dropdown-item bg-warning" href="/izincuti">
-                <ion-icon name="document-outline" role="img" class="md hydrated" aria-label="add outline"></ion-icon>
+                <ion-icon name="calendar-outline" role="img" class="md hydrated" aria-label="add outline"></ion-icon>
                 <p>Cuti</p>
             </a>
         </div>
     </div>
+
+    {{-- Modal Pop UP Action --}}
+
+    <div class="modal fade action-sheet" id="actionSheetIconed" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Aksi</h5>
+                </div>
+                <div class="modal-body" id="showact">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Delete --}}
+    <div class="modal fade dialogbox" id="deleteConfirm" data-backdrop="static" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yakin Dihapus ?</h5>
+                </div>
+                <div class="modal-body">
+                    Data Pengajuan Izin Akan dihapus
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-inline">
+                        <a href="#" class="btn btn-text-secondary" data-dismiss="modal">Batalkan</a>
+                        <a href="" class="btn btn-text-primary" id="hapuspengajuan">Hapus</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('myscript')
+    <script>
+        $(function() {
+            $(".card_izin").click(function(e) {
+                // Mendapatkan masing2 kode izin
+                var kode_izin = $(this).attr("kode_izin");
+                $("#showact").load('/izin/' + kode_izin + '/showact');
+            });
+        });
+    </script>
+@endpush

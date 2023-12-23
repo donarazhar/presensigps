@@ -226,9 +226,9 @@ class PresensiController extends Controller
         $karyawan = DB::table('karyawan')->where('nik', $nik)->first();
 
         // Validasi untuk file yang diupload
-        $request->validate([
-            'foto' => 'required|image|mimes:png,jpg|max:1024'
-        ]);
+        // $request->validate([
+        //     'foto' => 'required|image|mimes:png,jpg|max:1024'
+        // ]);
 
         // Proses Upload Foto
         if ($request->hasFile('foto')) {
@@ -238,10 +238,11 @@ class PresensiController extends Controller
         }
 
         // Proses Edit Profile
-        if (empty($request->password)) {
+        if (!empty($request->password)) {
             $data = [
                 'nama_lengkap' => $nama_lengkap,
                 'no_hp' => $no_hp,
+                'password' => $password,
                 'foto' => $foto
             ];
         } else {
@@ -252,6 +253,7 @@ class PresensiController extends Controller
                 'foto' => $foto,
             ];
         }
+
         $update = DB::table('karyawan')->where('nik', $nik)->update($data);
         if ($update) {
             // Proses simpan update foto
@@ -290,7 +292,10 @@ class PresensiController extends Controller
     public  function izin()
     {
         $nik = Auth::guard('karyawan')->user()->nik;
-        $dataizin = DB::table('pengajuan_izin')->where('nik', $nik)->get();
+        $dataizin = DB::table('pengajuan_izin')
+            ->leftJoin('pengajuan_cuti', 'pengajuan_izin.kode_cuti', '=', 'pengajuan_cuti.kode_cuti')
+            ->orderBy('tgl_izin_dari', 'desc')
+            ->where('nik', $nik)->get();
         return view('presensi.izin', compact('dataizin'));
     }
 
@@ -457,7 +462,7 @@ class PresensiController extends Controller
     {
 
         $query = PengajuanIzin::query();
-        $query->select('id', 'tgl_izin_dari', 'pengajuan_izin.nik', 'nama_lengkap', 'jabatan', 'status', 'status_approved', 'keterangan');
+        $query->select('kode_izin', 'tgl_izin_dari', 'pengajuan_izin.nik', 'nama_lengkap', 'jabatan', 'status', 'status_approved', 'keterangan');
         $query->join('karyawan', 'pengajuan_izin.nik', '=', 'karyawan.nik');
         if (!empty($request->dari) && !empty($request->sampai)) {
             $query->whereBetween('tgl_izin_dari', [$request->dari, $request->sampai]);
@@ -472,7 +477,7 @@ class PresensiController extends Controller
             $query->where('status_approved', $request->status_approved);
         }
         $query->orderBy('tgl_izin_dari', 'desc');
-        $izinsakit = $query->paginate(2);
+        $izinsakit = $query->paginate(10);
         $izinsakit->appends($request->all());
 
         return view('presensi.izinsakit', compact('izinsakit'));
@@ -482,7 +487,7 @@ class PresensiController extends Controller
     {
         $status_approved = $request->status_approved;
         $id_izinsakit_form = $request->id_izinsakit_form;
-        $update = DB::table('pengajuan_izin')->where('id', $id_izinsakit_form)->update([
+        $update = DB::table('pengajuan_izin')->where('kode_izin', $id_izinsakit_form)->update([
             'status_approved' => $status_approved
         ]);
         if ($update) {
@@ -494,10 +499,11 @@ class PresensiController extends Controller
 
     public  function batalkanizinsakit($id)
     {
-        $update = DB::table('pengajuan_izin')->where('id', $id)->update([
+        $update = DB::table('pengajuan_izin')->where('kode_izin', $id)->update([
             'status_approved' => 0
         ]);
         if ($update) {
+
             return Redirect::back()->with(['success' => 'Data Berhasil Diupdate']);
         } else {
             return Redirect::back()->with(['warning' => 'Data Gagal Diupdate']);
@@ -514,5 +520,26 @@ class PresensiController extends Controller
             ->where('tgl_izin_dari', $tgl_izin)
             ->count();
         return $cek;
+    }
+
+    public function showact($kode_izin)
+    {
+        $dataizin = DB::table('pengajuan_izin')->where('kode_izin', $kode_izin)->first();
+        return view('presensi.showact', compact('dataizin'));
+    }
+
+    public function deleteizin($kode_izin)
+    {
+        $cekdataizin = DB::table('pengajuan_izin')->where('kode_izin', $kode_izin)->first();
+        $doc_sid = $cekdataizin->doc_sid;
+        try {
+            DB::table('pengajuan_izin')->where('kode_izin', $kode_izin)->delete();
+            if ($doc_sid != null) {
+                Storage::delete('public/uploads/sid/' . $doc_sid);
+            }
+            return redirect('/presensi/izin')->with(['success' => 'Data berhasil dihapus']);
+        } catch (\Exception $e) {
+            return redirect('/presensi/izin')->with(['error' => 'Data gagal dihapus']);
+        }
     }
 }

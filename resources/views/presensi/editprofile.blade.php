@@ -44,20 +44,21 @@
             <div class="form-group boxed">
                 <div class="input-wrapper">
                     <input type="text" class="form-control" value="{{ $karyawan->nama_lengkap }}" name="nama_lengkap"
-                        placeholder="Nama Lengkap" autocomplete="off">
+                        id="nama_lengkap" placeholder="Nama Lengkap">
                 </div>
             </div>
             <div class="form-group boxed">
                 <div class="input-wrapper">
-                    <input type="text" class="form-control" value="{{ $karyawan->no_hp }}" name="no_hp"
-                        placeholder="No. HP" autocomplete="off">
+                    <input type="text" class="form-control" value="{{ $karyawan->no_hp }}" name="no_hp" id="no_hp"
+                        placeholder="No. HP">
                 </div>
             </div>
             <div class="form-group boxed">
                 <div class="input-wrapper">
-                    <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="off">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Password">
                 </div>
             </div>
+            {{-- <input type="text" name="fotolama" id="fotolama" value="{{ $karyawan->foto }}"> --}}
             <div class="custom-file-upload" id="fileUpload1">
                 <input type="file" name="foto" id="fileuploadInput" accept=".png, .jpg, .jpeg">
                 <label for="fileuploadInput">

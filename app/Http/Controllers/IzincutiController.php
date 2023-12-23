@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-use function Ramsey\Uuid\v1;
-
-class IzinabsenController extends Controller
+class IzincutiController extends Controller
 {
     public function create()
     {
-        return view('izin.create');
+        $mastercuti = DB::table('pengajuan_cuti')->orderBy('kode_cuti')->get();
+        return view('izincuti.create', compact('mastercuti'));
     }
+
 
     public  function store(Request $request)
     {
@@ -21,7 +21,8 @@ class IzinabsenController extends Controller
         $nik = Auth::guard('karyawan')->user()->nik;
         $tgl_izin_dari = $request->tgl_izin_dari;
         $tgl_izin_sampai = $request->tgl_izin_sampai;
-        $status = "i";
+        $kode_cuti = $request->kode_cuti;
+        $status = "c";
         $keterangan = $request->keterangan;
 
         // Mengambil bulan & tahun izin 
@@ -45,10 +46,11 @@ class IzinabsenController extends Controller
             'nik' => $nik,
             'tgl_izin_dari' => $tgl_izin_dari,
             'tgl_izin_sampai' => $tgl_izin_sampai,
+            'kode_cuti' => $kode_cuti,
             'status' => $status,
             'keterangan' => $keterangan,
         ];
-        // dd($data);
+
         $simpan = DB::table('pengajuan_izin')->insert($data);
         if ($simpan) {
             return redirect('/presensi/izin')->with(['success' => 'Data berhasil disimpan']);
@@ -60,7 +62,8 @@ class IzinabsenController extends Controller
     public function edit($kode_izin)
     {
         $dataizin = DB::table('pengajuan_izin')->where('kode_izin', $kode_izin)->first();
-        return view('izin.edit', compact('dataizin'));
+        $mastercuti = DB::table('pengajuan_cuti')->orderBy('kode_cuti')->get();
+        return view('izincuti.edit', compact('dataizin', 'mastercuti'));
     }
 
     public  function update($kode_izin, Request $request)
@@ -69,17 +72,22 @@ class IzinabsenController extends Controller
         $tgl_izin_dari = $request->tgl_izin_dari;
         $tgl_izin_sampai = $request->tgl_izin_sampai;
         $keterangan = $request->keterangan;
+        $kode_cuti = $request->kode_cuti;
 
-        $data = [
-            'tgl_izin_dari' => $tgl_izin_dari,
-            'tgl_izin_sampai' => $tgl_izin_sampai,
-            'keterangan' => $keterangan,
-        ];
+        try {
+            $data = [
+                'tgl_izin_dari' => $tgl_izin_dari,
+                'tgl_izin_sampai' => $tgl_izin_sampai,
+                'keterangan' => $keterangan,
+                'kode_cuti' => $kode_cuti
 
-        $update = DB::table('pengajuan_izin')->where('kode_izin', $kode_izin)->update($data);
-        if ($update) {
+            ];
+            DB::table('pengajuan_izin')
+                ->where('kode_izin', $kode_izin)
+                ->update($data);
+            //Simpan File Surat Izin Dokter
             return redirect('/presensi/izin')->with(['success' => 'Data berhasil diupdate']);
-        } else {
+        } catch (\Exception $e) {
             return redirect('/presensi/izin')->with(['errror' => 'Data gagal diupdate']);
         }
     }

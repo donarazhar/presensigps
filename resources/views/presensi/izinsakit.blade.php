@@ -181,7 +181,7 @@
                                             <td>
                                                 @if ($d->status_approved == 0)
                                                     <a href="" class="approve btn btn-sm btn-primary"
-                                                        id_izinsakit="{{ $d->id }}">
+                                                        id_izinsakit="{{ $d->kode_izin }}">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                             class="icon icon-tabler icon-tabler-external-link"
                                                             width="24" height="24" viewBox="0 0 24 24"
@@ -195,7 +195,7 @@
                                                         </svg>Proses
                                                     </a>
                                                 @else
-                                                    <a href="/presensi/{{ $d->id }}/batalkanizinsakit"
+                                                    <a href="/presensi/{{ $d->kode_izin }}/batalkanizinsakit"
                                                         class="btn btn-danger btn-sm">
 
                                                         <svg xmlns="http://www.w3.org/2000/svg"

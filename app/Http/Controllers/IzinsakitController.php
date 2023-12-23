@@ -21,14 +21,31 @@ class IzinsakitController extends Controller
         $tgl_izin_sampai = $request->tgl_izin_sampai;
         $status = "s";
         $keterangan = $request->keterangan;
+
+        // Mengambil bulan & tahun izin 
+        $bulan = date("m", strtotime($tgl_izin_dari));
+        $tahun = date("Y", strtotime($tgl_izin_dari));
+        $thn = substr($tahun, 2, 2);
+        $lastizin = DB::table('pengajuan_izin')
+            ->whereRaw('MONTH(tgl_izin_dari) ="' . $bulan . '"')
+            ->whereRaw('YEAR(tgl_izin_dari) ="' . $tahun . '"')
+            ->orderBy('kode_izin', 'desc')
+            ->first();
+
+        // Membuat kode izin "iz1223001"
+        $lastkodeizin = $lastizin != null ? $lastizin->kode_izin : "";
+        $format = "iz" . $bulan . $thn;
+        $kode_izin = buatkode($lastkodeizin, $format, 3);
+        // dd($kode_izin);
+
         // Membuat kode number random
-        $kode_izin = rand();
         if ($request->hasFile('sid')) {
             $sid = $kode_izin . "." . $request->file('sid')->getClientOriginalExtension();
         } else {
             $sid = null;
         }
         $data = [
+            'kode_izin' => $kode_izin,
             'nik' => $nik,
             'tgl_izin_dari' => $tgl_izin_dari,
             'tgl_izin_sampai' => $tgl_izin_sampai,
@@ -49,6 +66,50 @@ class IzinsakitController extends Controller
             return redirect('/presensi/izin')->with(['success' => 'Data berhasil disimpan']);
         } else {
             return redirect('/presensi/izin')->with(['errror' => 'Data gagal disimpan']);
+        }
+    }
+
+    public function edit($kode_izin)
+    {
+        $dataizin = DB::table('pengajuan_izin')->where('kode_izin', $kode_izin)->first();
+        return view('sakit.edit', compact('dataizin'));
+    }
+
+    public  function update($kode_izin, Request $request)
+    {
+
+        $tgl_izin_dari = $request->tgl_izin_dari;
+        $tgl_izin_sampai = $request->tgl_izin_sampai;
+        $keterangan = $request->keterangan;
+        $doc_sid = $request->doc_sidedit;
+
+        // Membuat kode number random
+        if ($request->hasFile('sid')) {
+            $sid = $kode_izin . "." . $request->file('sid')->getClientOriginalExtension();
+        } else {
+            $sid = $doc_sid;
+        }
+        $data = [
+            'tgl_izin_dari' => $tgl_izin_dari,
+            'tgl_izin_sampai' => $tgl_izin_sampai,
+            'keterangan' => $keterangan,
+            'doc_sid' => $sid
+
+        ];
+
+        try {
+            DB::table('pengajuan_izin')
+                ->where('kode_izin', $kode_izin)
+                ->update($data);
+            //Simpan File Surat Izin Dokter
+            if ($request->hasFile('sid')) {
+                $sid = $kode_izin . "." . $request->file('sid')->getClientOriginalExtension();
+                $folderPath = "public/uploads/sid/";
+                $request->file('sid')->storeAs($folderPath, $sid);
+            }
+            return redirect('/presensi/izin')->with(['success' => 'Data berhasil diupdate']);
+        } catch (\Exception $e) {
+            return redirect('/presensi/izin')->with(['errror' => 'Data gagal diupdate']);
         }
     }
 }

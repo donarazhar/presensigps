@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
+use App\Http\Controllers\CutiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\IzinabsenController;
+use App\Http\Controllers\IzincutiController;
 use App\Http\Controllers\IzinsakitController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KonfigurasiController;
@@ -63,9 +65,24 @@ Route::middleware(['auth:karyawan'])->group(function () {
     // Izin Absen
     Route::get('/izinabsen', [IzinabsenController::class, 'create']);
     Route::post('/izinabsen/store', [IzinabsenController::class, 'store']);
+    Route::get('/izinabsen/{kode_izin}/edit', [IzinabsenController::class, 'edit']);
+    Route::post('/izinabsen/{kode_izin}/update', [IzinabsenController::class, 'update']);
+
     // Izin Sakit
     Route::get('/izinsakit', [IzinsakitController::class, 'create']);
     Route::post('/izinsakit/store', [IzinsakitController::class, 'store']);
+    Route::get('/izinsakit/{kode_izin}/edit', [IzinsakitController::class, 'edit']);
+    Route::post('/izinsakit/{kode_izin}/update', [IzinsakitController::class, 'update']);
+
+    // Izin Cuti
+    Route::get('/izincuti', [IzincutiController::class, 'create']);
+    Route::post('/izincuti/store', [IzincutiController::class, 'store']);
+    Route::get('/izincuti/{kode_izin}/edit', [IzincutiController::class, 'edit']);
+    Route::post('/izincuti/{kode_izin}/update', [IzincutiController::class, 'update']);
+
+    // Edit Izin
+    Route::get('/izin/{kode_izin}/showact', [PresensiController::class, 'showact']);
+    Route::get('/izin/{kode_izin}/delete', [PresensiController::class, 'deleteizin']);
 });
 
 Route::middleware(['auth:user'])->group(function () {
@@ -121,7 +138,7 @@ Route::middleware(['auth:user'])->group(function () {
     Route::post('/cabang/{kode_cabang}/update', [CabangController::class, 'update']);
     Route::post('/cabang/{kode_cabang}/delete', [CabangController::class, 'delete']);
 
-    // KOnfigurasi Jam kerja departemen
+    // Konfigurasi Jam kerja departemen
     Route::get('/konfigurasi/jamkerjadept', [KonfigurasiController::class, 'jamkerjadept']);
     Route::get('/konfigurasi/jamkerjadept/{kode_jk_dept}/editjamkerjadept', [KonfigurasiController::class, 'editjamkerjadept']);
     Route::get('/konfigurasi/jamkerjadept/{kode_jk_dept}/showjamkerjadept', [KonfigurasiController::class, 'showjamkerjadept']);
@@ -129,4 +146,11 @@ Route::middleware(['auth:user'])->group(function () {
     Route::get('/konfigurasi/setjamkerjadept', [KonfigurasiController::class, 'setjamkerjadept']);
     Route::post('/konfigurasi/storesetjamkerjadept', [KonfigurasiController::class, 'storesetjamkerjadept']);
     Route::post('/konfigurasi/{kode_jk_dept}/updatesetjamkerjadept', [KonfigurasiController::class, 'updatesetjamkerjadept']);
+
+    // Cuti   
+    Route::get('/cuti', [CutiController::class, 'index']);
+    Route::post('/cuti/store', [CutiController::class, 'store']);
+    Route::post('/cuti/edit', [CutiController::class, 'edit']);
+    Route::post('/cuti/{kode_cuti}/update', [CutiController::class, 'update']);
+    Route::post('/cuti/{kode_cuti}/delete', [CutiController::class, 'delete']);
 });
