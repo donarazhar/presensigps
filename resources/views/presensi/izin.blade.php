@@ -47,6 +47,52 @@
     </div>
     <div class="row">
         <div class="col">
+            <form method="GET" action="/presensi/izin">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="form-group">
+                            <select name="bulan" id="bulan" class="form-control selectmaterialize">
+                                <option value="">-Pilih Bulan-</option>
+                                @for ($i = 1; $i <= 12; $i++)
+                                    <option {{ Request('bulan') == $i ? 'selected' : '' }} value="{{ $i }}">
+                                        {{ $namabulan[$i] }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <select name="tahun" id="tahun" class="form-control selectmaterialize">
+                                <option value="">-Pilih Tahun-</option>
+                                @php
+                                    $tahunmulai = 2022;
+                                    $tahunskrg = date('Y');
+                                    for ($tahun = $tahunmulai; $tahun <= $tahunskrg; $tahun++) {
+                                        if (Request('tahun') == $tahun) {
+                                            $selected = 'selected';
+                                        } else {
+                                            $selected = '';
+                                        }
+                                        echo "<option $selected value='$tahun'>
+                                        $tahun</option>";
+                                    }
+                                @endphp
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button class="btn btn-primary w-100">Cari Data</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
             @foreach ($dataizin as $d)
                 @php
                     if ($d->status == 'i') {
@@ -59,8 +105,8 @@
                         $status = 'Not Found';
                     }
                 @endphp
-                <div class="card mb-1 card_izin" kode_izin="{{ $d->kode_izin }}" data-toggle="modal"
-                    data-target="#actionSheetIconed">
+                <div class="card mb-1 card_izin" kode_izin="{{ $d->kode_izin }}" status_approved="{{ $d->status_approved }}"
+                    data-toggle="modal" data-target="#actionSheetIconed">
                     <div class="card-body">
                         <div class="historicontent">
                             <div class="iconpresensi">
@@ -172,7 +218,17 @@
             $(".card_izin").click(function(e) {
                 // Mendapatkan masing2 kode izin
                 var kode_izin = $(this).attr("kode_izin");
-                $("#showact").load('/izin/' + kode_izin + '/showact');
+                var status_approved = $(this).attr("status_approved");
+
+                if (status_approved == 1) {
+                    Swal.fire({
+                        title: 'Oopss !',
+                        text: 'Data tidak dapat diubah !',
+                        icon: 'success'
+                    });
+                } else {
+                    $("#showact").load('/izin/' + kode_izin + '/showact');
+                }
             });
         });
     </script>

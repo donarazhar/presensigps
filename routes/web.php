@@ -129,7 +129,7 @@ Route::middleware(['auth:user'])->group(function () {
     // Data Izin Sakit
     Route::get('/presensi/izinsakit', [PresensiController::class, 'izinsakit']);
     Route::post('/presensi/approveizinsakit', [PresensiController::class, 'approveizinsakit']);
-    Route::get('/presensi/{id}/batalkanizinsakit', [PresensiController::class, 'batalkanizinsakit']);
+    Route::get('/presensi/{kode_izin}/batalkanizinsakit', [PresensiController::class, 'batalkanizinsakit']);
 
     // Cabang 
     Route::get('/cabang', [CabangController::class, 'index']);
