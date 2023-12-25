@@ -16,12 +16,17 @@ class DashboardController extends Controller
         $nik = Auth::guard('karyawan')->user()->nik;
         $presensihariini = DB::table('presensi')->where('nik', $nik)->where('tgl_presensi', $hariini)->first();
         $historibulanini = DB::table('presensi')
+            ->select('presensi.*', 'keterangan', 'jam_kerja.*', 'doc_sid', 'nama_cuti')
             ->leftJoin('jam_kerja', 'presensi.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
-            ->where('nik', $nik)
+            ->leftJoin('pengajuan_izin', 'presensi.kode_izin', '=', 'pengajuan_izin.kode_izin')
+            ->leftJoin('pengajuan_cuti', 'pengajuan_izin.kode_cuti', '=', 'pengajuan_cuti.kode_cuti')
+            ->where('presensi.nik', $nik)
             ->whereRaw('MONTH(tgl_presensi)="' . $bulanini . '"')
             ->whereRaw('YEAR(tgl_presensi)="' . $tahunini . '"')
             ->orderBy('tgl_presensi')
             ->get();
+
+        // dd($historibulanini);
 
         $rekappresensi = DB::table('presensi')
             ->selectRaw('COUNT(nik) as jmlhadir, SUM(IF(jam_in > jam_masuk,1,0))as jmlterlambat')

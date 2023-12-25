@@ -55,17 +55,33 @@ class IzinsakitController extends Controller
 
         ];
 
-        $simpan = DB::table('pengajuan_izin')->insert($data);
-        if ($simpan) {
-            //Simpan File Surat Izin Dokter
-            if ($request->hasFile('sid')) {
-                $sid = $kode_izin . "." . $request->file('sid')->getClientOriginalExtension();
-                $folderPath = "public/uploads/sid/";
-                $request->file('sid')->storeAs($folderPath, $sid);
+        // Mengecek apakah ada sudah ada tanggal absen, atau izin
+        $cekpresensi = DB::table('presensi')
+            ->whereBetween('tgl_presensi', [$tgl_izin_dari, $tgl_izin_sampai])
+            ->where('nik', '=', $nik);
+
+
+        $datapresensi = $cekpresensi->get();
+        if ($cekpresensi->count() > 0) {
+            $blacklistdate = "";
+            foreach ($datapresensi as $d) {
+                $blacklistdate .= date("d-m-Y", strtotime($d->tgl_presensi)) . ", ";
             }
-            return redirect('/presensi/izin')->with(['success' => 'Data berhasil disimpan']);
+
+            return redirect('/presensi/izin')->with(['error' => 'Tanggal pengajuan  ' . $blacklistdate . '  sudah pernah diajukan.']);
         } else {
-            return redirect('/presensi/izin')->with(['errror' => 'Data gagal disimpan']);
+            $simpan = DB::table('pengajuan_izin')->insert($data);
+            if ($simpan) {
+                //Simpan File Surat Izin Dokter
+                if ($request->hasFile('sid')) {
+                    $sid = $kode_izin . "." . $request->file('sid')->getClientOriginalExtension();
+                    $folderPath = "public/uploads/sid/";
+                    $request->file('sid')->storeAs($folderPath, $sid);
+                }
+                return redirect('/presensi/izin')->with(['success' => 'Data berhasil disimpan']);
+            } else {
+                return redirect('/presensi/izin')->with(['error' => 'Data gagal disimpan']);
+            }
         }
     }
 
@@ -109,7 +125,7 @@ class IzinsakitController extends Controller
             }
             return redirect('/presensi/izin')->with(['success' => 'Data berhasil diupdate']);
         } catch (\Exception $e) {
-            return redirect('/presensi/izin')->with(['errror' => 'Data gagal diupdate']);
+            return redirect('/presensi/izin')->with(['error' => 'Data gagal diupdate']);
         }
     }
 }

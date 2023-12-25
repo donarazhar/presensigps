@@ -58,6 +58,7 @@
             </div>
         </div>
     </div>
+    <input type="hidden" name="password" id="password" value="{{ $karyawan->password }}">
     <div class="row">
         <div class="col-12">
             <div class="input-icon mb-3">

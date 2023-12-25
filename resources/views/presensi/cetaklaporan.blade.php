@@ -141,51 +141,66 @@
                 <th>Foto</th>
                 <th>Jam Pulang</th>
                 <th>Foto</th>
+                <th>Status</th>
                 <th>Keterangan</th>
                 <th>Jml Jam</th>
             </tr>
             @foreach ($presensi as $d)
-                @php
-                    $path_in = Storage::url('uploads/absensi/' . $d->foto_in);
-                    $path_out = Storage::url('uploads/absensi/' . $d->foto_out);
-                    $jamterlambat = selisih($d->jam_masuk, $d->jam_in);
-                @endphp
-
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ date('d-m-Y', strtotime($d->tgl_presensi)) }}</td>
-                    <td>{{ $d->jam_in }}</td>
-                    <td><img src="{{ url($path_in) }}" alt="" class="foto">
-                    </td>
-                    <td>{{ $d->jam_out != null ? $d->jam_out : 'Belum Absen' }}</td>
-                    <td>
-                        @if ($d->jam_out != null)
-                            <img src="{{ url($path_out) }}" alt="" class="foto">
-                        @else
-                            <img src="{{ asset('assets/img/nofoto.png') }}" alt="" class="foto">
-                        @endif
-                    </td>
-                    <td>
-                        @if ($d->jam_in >= $d->jam_masuk)
-                            Telat ({{ $jamterlambat }} menit)</span>
-                        @else
-                            On Time</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if ($d->jam_out != null)
-                            @php
-                                $jmljamkerja = selisih($d->jam_in, $d->jam_out);
-                            @endphp
-                        @else
-                            @php
-                                $jmljamkerja = 0;
-                            @endphp
-                        @endif
-                        {{ $jmljamkerja }}
-                        Jam
-                    </td>
-                </tr>
+                @if ($d->status == 'h')
+                    @php
+                        $path_in = Storage::url('uploads/absensi/' . $d->foto_in);
+                        $path_out = Storage::url('uploads/absensi/' . $d->foto_out);
+                        $jamterlambat = selisih($d->jam_masuk, $d->jam_in);
+                    @endphp
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ date('d-m-Y', strtotime($d->tgl_presensi)) }}</td>
+                        <td>{{ $d->jam_in }}</td>
+                        <td><img src="{{ url($path_in) }}" alt="" class="foto">
+                        </td>
+                        <td>{{ $d->jam_out != null ? $d->jam_out : 'Belum Absen' }}</td>
+                        <td>
+                            @if ($d->jam_out != null)
+                                <img src="{{ url($path_out) }}" alt="" class="foto">
+                            @else
+                                <img src="{{ asset('assets/img/nofoto.png') }}" alt="" class="foto">
+                            @endif
+                        </td>
+                        <td style="text-align:center">{{ $d->status }}</td>
+                        <td>
+                            @if ($d->jam_in >= $d->jam_masuk)
+                                Telat ({{ $jamterlambat }} menit)</span>
+                            @else
+                                On Time</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($d->jam_out != null)
+                                @php
+                                    $jmljamkerja = selisih($d->jam_in, $d->jam_out);
+                                @endphp
+                            @else
+                                @php
+                                    $jmljamkerja = 0;
+                                @endphp
+                            @endif
+                            {{ $jmljamkerja }}
+                            Jam
+                        </td>
+                    </tr>
+                @else
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ date('d-m-Y', strtotime($d->tgl_presensi)) }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td style="text-align:center">{{ $d->status }}</td>
+                        <td>{{ $d->keterangan }}</td>
+                        <td></td>
+                    </tr>
+                @endif
             @endforeach
         </table>
         <table width="100%">

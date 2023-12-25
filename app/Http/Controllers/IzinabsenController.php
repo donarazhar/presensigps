@@ -38,7 +38,6 @@ class IzinabsenController extends Controller
         $lastkodeizin = $lastizin != null ? $lastizin->kode_izin : "";
         $format = "iz" . $bulan . $thn;
         $kode_izin = buatkode($lastkodeizin, $format, 3);
-        // dd($kode_izin);
 
         $data = [
             'kode_izin' => $kode_izin,
@@ -48,12 +47,28 @@ class IzinabsenController extends Controller
             'status' => $status,
             'keterangan' => $keterangan,
         ];
-        // dd($data);
-        $simpan = DB::table('pengajuan_izin')->insert($data);
-        if ($simpan) {
-            return redirect('/presensi/izin')->with(['success' => 'Data berhasil disimpan']);
+
+        // Mengecek apakah ada sudah ada tanggal absen, atau izin
+        $cekpresensi = DB::table('presensi')
+            ->whereBetween('tgl_presensi', [$tgl_izin_dari, $tgl_izin_sampai])
+            ->where('nik', '=', $nik);
+
+
+        $datapresensi = $cekpresensi->get();
+        if ($cekpresensi->count() > 0) {
+            $blacklistdate = "";
+            foreach ($datapresensi as $d) {
+                $blacklistdate .= date("d-m-Y", strtotime($d->tgl_presensi)) . ", ";
+            }
+
+            return redirect('/presensi/izin')->with(['error' => 'Tanggal pengajuan  ' . $blacklistdate . '  sudah pernah diajukan.']);
         } else {
-            return redirect('/presensi/izin')->with(['errror' => 'Data gagal disimpan']);
+            $simpan = DB::table('pengajuan_izin')->insert($data);
+            if ($simpan) {
+                return redirect('/presensi/izin')->with(['success' => 'Data berhasil disimpan']);
+            } else {
+                return redirect('/presensi/izin')->with(['error' => 'Data gagal disimpan']);
+            }
         }
     }
 
@@ -80,7 +95,7 @@ class IzinabsenController extends Controller
         if ($update) {
             return redirect('/presensi/izin')->with(['success' => 'Data berhasil diupdate']);
         } else {
-            return redirect('/presensi/izin')->with(['errror' => 'Data gagal diupdate']);
+            return redirect('/presensi/izin')->with(['error' => 'Data gagal diupdate']);
         }
     }
 }

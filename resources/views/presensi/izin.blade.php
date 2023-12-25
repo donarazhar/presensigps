@@ -223,7 +223,7 @@
                 if (status_approved == 1) {
                     Swal.fire({
                         title: 'Oopss !',
-                        text: 'Data tidak dapat diubah !',
+                        text: 'Data sudah disetujui !!! Tidak dapat diubah !',
                         icon: 'success'
                     });
                 } else {

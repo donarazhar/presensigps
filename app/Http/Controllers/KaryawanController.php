@@ -106,7 +106,7 @@ class KaryawanController extends Controller
         $no_hp = $request->no_hp;
         $kode_dept = $request->kode_dept;
         $kode_cabang = $request->kode_cabang;
-        $password = Hash::make('123');
+        $password = $request->password;
         $old_foto = $request->old_foto;
 
         // Proses Upload Foto

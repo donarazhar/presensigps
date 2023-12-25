@@ -51,11 +51,28 @@ class IzincutiController extends Controller
             'keterangan' => $keterangan,
         ];
 
-        $simpan = DB::table('pengajuan_izin')->insert($data);
-        if ($simpan) {
-            return redirect('/presensi/izin')->with(['success' => 'Data berhasil disimpan']);
+
+        // Mengecek apakah ada sudah ada tanggal absen, atau izin
+        $cekpresensi = DB::table('presensi')
+            ->whereBetween('tgl_presensi', [$tgl_izin_dari, $tgl_izin_sampai])
+            ->where('nik', '=', $nik);
+
+
+        $datapresensi = $cekpresensi->get();
+        if ($cekpresensi->count() > 0) {
+            $blacklistdate = "";
+            foreach ($datapresensi as $d) {
+                $blacklistdate .= date("d-m-Y", strtotime($d->tgl_presensi)) . ", ";
+            }
+
+            return redirect('/presensi/izin')->with(['error' => 'Tanggal pengajuan  ' . $blacklistdate . '  sudah pernah diajukan.']);
         } else {
-            return redirect('/presensi/izin')->with(['errror' => 'Data gagal disimpan']);
+            $simpan = DB::table('pengajuan_izin')->insert($data);
+            if ($simpan) {
+                return redirect('/presensi/izin')->with(['success' => 'Data berhasil disimpan']);
+            } else {
+                return redirect('/presensi/izin')->with(['error' => 'Data gagal disimpan']);
+            }
         }
     }
 
@@ -88,7 +105,7 @@ class IzincutiController extends Controller
             //Simpan File Surat Izin Dokter
             return redirect('/presensi/izin')->with(['success' => 'Data berhasil diupdate']);
         } catch (\Exception $e) {
-            return redirect('/presensi/izin')->with(['errror' => 'Data gagal diupdate']);
+            return redirect('/presensi/izin')->with(['error' => 'Data gagal diupdate']);
         }
     }
 }
