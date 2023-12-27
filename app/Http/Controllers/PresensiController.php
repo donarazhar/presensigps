@@ -139,6 +139,9 @@ class PresensiController extends Controller
         $image_base64 = base64_decode($image_parts[1]);
         $fileName = $formatName . ".png";
         $file = $folderPath . $fileName;
+        $datakaryawan = DB::table('karyawan')->where('nik', $nik)->first();
+        $no_hp = $datakaryawan->no_hp;
+
 
         if ($radius > $lok_kantor->radius_cabang) {
             echo "error|Maaf Anda Berada Diluar Radius, Jarak Anda " . $radius . " Meter Dari Kantor|radius";
@@ -149,7 +152,7 @@ class PresensiController extends Controller
 
                 // Validasi untuk jam pulang
                 if ($jam < $jamkerja->jam_pulang) {
-                    echo "error|Maaf Belum Waktunya Jam Pulang|in";
+                    echo "error|Maaf Belum Waktunya Jam Pulang / Anda sedang IZIN|in";
                 } else {
                     $data_pulang = [
                         'jam_out' => $jam,
@@ -160,6 +163,26 @@ class PresensiController extends Controller
                     if ($update) {
                         echo "success|Terima Kasih, Hati-Hati Dijalan|out";
                         Storage::put($file, $image_base64);
+
+                        // API WA Gateway untuk mengirimkan pesan ke WA Karyawan
+                        $curl = curl_init();
+
+                        curl_setopt_array($curl, array(
+                            CURLOPT_URL => 'https://wag.masjidagungalazhar.com/send-message',
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_POSTFIELDS => array('message' => 'Terima kasih sudah melakukan Presensi Pulang jam  ' . $jam, 'number' => $no_hp, 'file_dikirim' => ''),
+                        ));
+
+                        $response = curl_exec($curl);
+
+                        curl_close($curl);
+                        echo $response;
                     } else {
                         echo "error|Maaf Gagal Absen Hubungi Admin|out";
                     }
@@ -186,6 +209,28 @@ class PresensiController extends Controller
                     $simpan = DB::table('presensi')->insert($data);
                     if ($simpan) {
                         echo "success|Selamat Bekerja|in";
+
+
+
+                        // API WA Gateway untuk mengirimkan pesan ke WA Karyawan
+                        $curl = curl_init();
+
+                        curl_setopt_array($curl, array(
+                            CURLOPT_URL => 'https://wag.masjidagungalazhar.com/send-message',
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_POSTFIELDS => array('message' => 'Terima kasih sudah melakukan Presensi Masuk jam  ' . $jam, 'number' => $no_hp, 'file_dikirim' => ''),
+                        ));
+
+                        $response = curl_exec($curl);
+
+                        curl_close($curl);
+                        echo $response;
                         Storage::put($file, $image_base64);
                     } else {
                         echo "error|Maaf Gagal Absen Hubungi Admin|in";

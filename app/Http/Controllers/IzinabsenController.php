@@ -48,11 +48,10 @@ class IzinabsenController extends Controller
             'keterangan' => $keterangan,
         ];
 
-        // Mengecek apakah ada sudah ada tanggal absen, atau izin
+        // Mengecek apakah ada sudah ada tanggal absen, atau izin pada tabel presensi
         $cekpresensi = DB::table('presensi')
             ->whereBetween('tgl_presensi', [$tgl_izin_dari, $tgl_izin_sampai])
             ->where('nik', '=', $nik);
-
 
         $datapresensi = $cekpresensi->get();
         if ($cekpresensi->count() > 0) {

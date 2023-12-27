@@ -39,7 +39,23 @@ class IzincutiController extends Controller
         $lastkodeizin = $lastizin != null ? $lastizin->kode_izin : "";
         $format = "iz" . $bulan . $thn;
         $kode_izin = buatkode($lastkodeizin, $format, 3);
-        // dd($kode_izin);
+
+
+        // Hitung jumlah hari yang diajukan
+        $jmlhari = hitunghari($tgl_izin_dari, $tgl_izin_sampai);
+
+        // Cek jumlah maksimal cuti
+        $cuti = DB::table('pengajuan_cuti')->where('kode_cuti', $kode_cuti)->first();
+        $jmlmaxcuti = $cuti->jml_hari;
+
+        // Cek jumlah cuti yang sudah digunakan pada tahun aktif
+        $cutidigunakan = DB::table('presensi')
+            ->whereRaw('YEAR(tgl_presensi)="' . $tahun . '"')
+            ->where('status', 'c')
+            ->where('nik', $nik)
+            ->count();
+        // Sisa cuti
+        $sisacuti = $jmlmaxcuti - $cutidigunakan;
 
         $data = [
             'kode_izin' => $kode_izin,
@@ -59,7 +75,10 @@ class IzincutiController extends Controller
 
 
         $datapresensi = $cekpresensi->get();
-        if ($cekpresensi->count() > 0) {
+
+        if ($jmlhari > $sisacuti) {
+            return redirect('/presensi/izin')->with(['error' => 'Jumlah hari melebihi jumlah maksimal cuti 1 tahun, sisa cuti anda adalah ' . $sisacuti . ' Hari']);
+        } else if ($cekpresensi->count() > 0) {
             $blacklistdate = "";
             foreach ($datapresensi as $d) {
                 $blacklistdate .= date("d-m-Y", strtotime($d->tgl_presensi)) . ", ";
