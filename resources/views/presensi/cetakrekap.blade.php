@@ -85,6 +85,7 @@
                 </td>
             </tr>
         </table>
+
         <table class="tabelpresensi">
             <tr>
                 <th rowspan="2">NIK</th>

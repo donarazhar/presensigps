@@ -250,19 +250,21 @@
                         class="dropdown-menu {{ request()->is(['karyawan', 'departemen', 'cabang', 'cuti']) ? 'show' : '' }}">
                         <div class="dropdown-menu-columns">
                             <div class="dropdown-menu-column">
-                                <a class="dropdown-item {{ request()->is(['karyawan']) ? 'active' : '' }}"
-                                    href="/karyawan">
+                                <a class="dropdown-item {{ request()->is(['cabang']) ? 'active' : '' }}"
+                                    href="/cabang">
                                     <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-user-plus" width="24" height="24"
+                                        class="icon icon-tabler icon-tabler-home-link" width="24" height="24"
                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                         stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-                                        <path d="M16 19h6" />
-                                        <path d="M19 16v6" />
-                                        <path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
+                                        <path d="M20.085 11.085l-8.085 -8.085l-9 9h2v7a2 2 0 0 0 2 2h4.5" />
+                                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 1.807 1.143" />
+                                        <path d="M21 21m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                        <path d="M21 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                        <path d="M16 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                        <path d="M21 16l-5 3l5 2" />
                                     </svg>
-                                    Data Karyawan
+                                    Data Kantor YPIA
                                 </a>
                                 <a class="dropdown-item {{ request()->is(['departemen']) ? 'active' : '' }}"
                                     href="/departemen">
@@ -280,22 +282,22 @@
                                     </svg>
                                     Data Unit Kerja
                                 </a>
-                                <a class="dropdown-item {{ request()->is(['cabang']) ? 'active' : '' }}"
-                                    href="/cabang">
+                                <a class="dropdown-item {{ request()->is(['karyawan']) ? 'active' : '' }}"
+                                    href="/karyawan">
                                     <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-home-link" width="24" height="24"
+                                        class="icon icon-tabler icon-tabler-user-plus" width="24" height="24"
                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                         stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M20.085 11.085l-8.085 -8.085l-9 9h2v7a2 2 0 0 0 2 2h4.5" />
-                                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 1.807 1.143" />
-                                        <path d="M21 21m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        <path d="M21 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        <path d="M16 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        <path d="M21 16l-5 3l5 2" />
+                                        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                        <path d="M16 19h6" />
+                                        <path d="M19 16v6" />
+                                        <path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
                                     </svg>
-                                    Data Kantor YPIA
+                                    Data Karyawan
                                 </a>
+
+
                                 <a class="dropdown-item {{ request()->is(['cuti']) ? 'active' : '' }}" href="/cuti">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                         class="icon icon-tabler icon-tabler-calendar-month" width="24"
@@ -349,20 +351,22 @@
                         href="/presensi/izinsakit">
                         <span
                             class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-device-desktop" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-week"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path
-                                    d="M3 5a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1v-10z" />
-                                <path d="M7 20h10" />
-                                <path d="M9 16v4" />
-                                <path d="M15 16v4" />
+                                    d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
+                                <path d="M16 3v4" />
+                                <path d="M8 3v4" />
+                                <path d="M4 11h16" />
+                                <path d="M8 14v4" />
+                                <path d="M12 14v4" />
+                                <path d="M16 14v4" />
                             </svg>
                         </span>
                         <span class="nav-link-title">
-                            Data, Sakit & Cuti
+                            Data Izin, Sakit & Cuti
                         </span>
                     </a>
                 </li>

@@ -63,22 +63,7 @@
 <!-- Set also "landscape" if you need -->
 
 <body class="A4">
-    @php
-        function selisih($jam_masuk, $jam_keluar)
-        {
-            [$h, $m, $s] = explode(':', $jam_masuk);
-            $dtAwal = mktime($h, $m, $s, '1', '1', '1');
-            [$h, $m, $s] = explode(':', $jam_keluar);
-            $dtAkhir = mktime($h, $m, $s, '1', '1', '1');
-            $dtSelisih = $dtAkhir - $dtAwal;
-            $totalmenit = $dtSelisih / 60;
-            $jam = explode('.', $totalmenit / 60);
-            $sisamenit = $totalmenit / 60 - $jam[0];
-            $sisamenit2 = $sisamenit * 60;
-            $jml_jam = $jam[0];
-            return $jml_jam . ':' . round($sisamenit2);
-        }
-    @endphp
+
     <!-- Each sheet element should have the class "sheet" -->
     <!-- "padding-**mm" is optional: you can set 10, 15, 20 or 25 -->
     <section class="sheet padding-10mm">
@@ -98,6 +83,7 @@
                 </td>
             </tr>
         </table>
+
         <table class="tabeldatakaryawan">
             <tr>
                 <td rowspan="6">
@@ -150,7 +136,7 @@
                     @php
                         $path_in = Storage::url('uploads/absensi/' . $d->foto_in);
                         $path_out = Storage::url('uploads/absensi/' . $d->foto_out);
-                        $jamterlambat = selisih($d->jam_masuk, $d->jam_in);
+                        $jamterlambat = hitungjamkerja($d->jam_masuk, $d->jam_in);
                     @endphp
                     <tr>
                         <td>{{ $loop->iteration }}</td>
@@ -177,7 +163,12 @@
                         <td>
                             @if ($d->jam_out != null)
                                 @php
-                                    $jmljamkerja = selisih($d->jam_in, $d->jam_out);
+                                    $tgl_masuk = $d->tgl_presensi;
+                                    $tgl_pulang = $d->lintashari == 1 ? date('Y-m-d', strtotime('+1 days', strtotime($tgl_masuk))) : $tgl_masuk;
+                                    $jam_masuk = $tgl_masuk . ' ' . $d->jam_in;
+                                    $jam_pulang = $tgl_pulang . ' ' . $d->jam_out;
+
+                                    $jmljamkerja = hitungjamkerja($jam_masuk, $jam_pulang);
                                 @endphp
                             @else
                                 @php

@@ -57,7 +57,30 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <select name="kode_cabang" id="nama_cabang" class="form-select" required>
+                                                <option value="">- Kantor Cabang -</option>
+                                                @foreach ($cabang as $c)
+                                                    <option value="{{ $c->kode_cabang }}">{{ $c->nama_cabang }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <select name="kode_dept" id="kode_dept" class="form-select">
+                                                <option value="">- Unit Kerja -</option>
+                                                @foreach ($departemen as $d)
+                                                    <option value="{{ $d->kode_dept }}">{{ $d->nama_dept }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row mt-2">
                                     <div class="col-6">
                                         <div class="form-group">

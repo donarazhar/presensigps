@@ -512,8 +512,10 @@ class PresensiController extends Controller
     public  function rekap()
     {
         $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        $departemen = DB::table('departemen')->get();
+        $cabang = DB::table('cabang')->get();
 
-        return view('presensi.rekap', compact('namabulan'));
+        return view('presensi.rekap', compact('namabulan', 'departemen', 'cabang'));
     }
 
     public function cetakrekap(Request $request)
@@ -521,6 +523,8 @@ class PresensiController extends Controller
 
         $bulan = $request->bulan;
         $tahun = $request->tahun;
+        $kode_cabang = $request->kode_cabang;
+        $kode_dept = $request->kode_dept;
         // Untuk mendapatkan tanggal dari dan tanggal sampai untuk rekap presensi
         $dari = $tahun . "-" . $bulan . "-01";
         $sampai = date("Y-m-t", strtotime($dari));
@@ -562,21 +566,24 @@ class PresensiController extends Controller
 
         $query->leftJoin(
             DB::raw("( 
-    SELECT 
-    $select_date 
-    presensi.nik 
+                SELECT 
+                $select_date 
+                presensi.nik 
 
-    FROM presensi
-    LEFT JOIN jam_kerja ON presensi.kode_jam_kerja = jam_kerja.kode_jam_kerja
-    LEFT JOIN pengajuan_izin ON presensi.kode_izin = pengajuan_izin.kode_izin
-    WHERE tgl_presensi BETWEEN '$rangetanggal[0]' AND '$sampai'
-    GROUP BY nik
-    )presensi"),
+                FROM presensi
+                LEFT JOIN jam_kerja ON presensi.kode_jam_kerja = jam_kerja.kode_jam_kerja
+                LEFT JOIN pengajuan_izin ON presensi.kode_izin = pengajuan_izin.kode_izin
+                WHERE tgl_presensi BETWEEN '$rangetanggal[0]' AND '$sampai'
+                GROUP BY nik
+                )presensi"),
             function ($join) {
                 $join->on('karyawan.nik', '=', 'presensi.nik');
             }
         );
-
+        if (!empty($kode_dept)) {
+            $query->where('kode_dept', $kode_dept);
+        }
+        $query->where('kode_cabang', $kode_cabang);
         $query->orderBy('nama_lengkap');
         $rekap = $query->get();
 
