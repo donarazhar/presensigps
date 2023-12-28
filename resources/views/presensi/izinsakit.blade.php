@@ -159,87 +159,95 @@
                             </form>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12 table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>NO</th>
-                                        <th>Kode Izin</th>
-                                        <th>Tgl Izin</th>
-                                        <th>NIK</th>
-                                        <th>Nama</th>
-                                        <th>Jabatan</th>
-                                        <th>Status</th>
-                                        <th>Keterangan</th>
-                                        <th>Proses</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($izinsakit as $d)
-                                        <tr>
-                                            <td>{{ $loop->iteration + $izinsakit->firstItem() - 1 }}</td>
-                                            <td>{{ $d->kode_izin }}</td>
-                                            <td>{{ date('d-m-Y', strtotime($d->tgl_izin_dari)) }} s/d
-                                                {{ date('d-m-Y', strtotime($d->tgl_izin_sampai)) }}
-                                            </td>
-                                            <td>{{ $d->nik }}</td>
-                                            <td>{{ $d->nama_lengkap }}</td>
-                                            <td>{{ $d->jabatan }}</td>
-                                            <td>{{ $d->status == 'i' ? 'Izin' : 'Sakit' }}</td>
-                                            <td>{{ $d->keterangan }}</td>
-                                            <td>
-                                                @if ($d->status_approved == 1)
-                                                    <span class="badge bg-success text-light">Disetujui</span>
-                                                @elseif($d->status_approved == 2)
-                                                    <span class="badge bg-danger text-light">Ditolak</span>
-                                                @else
-                                                    <span class="badge bg-warning text-light">Pending</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($d->status_approved == 0)
-                                                    <a href="" class="approve btn btn-sm btn-primary"
-                                                        kode_izin="{{ $d->kode_izin }}">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="icon icon-tabler icon-tabler-external-link"
-                                                            width="24" height="24" viewBox="0 0 24 24"
-                                                            stroke-width="2" stroke="currentColor" fill="none"
-                                                            stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path
-                                                                d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" />
-                                                            <path d="M11 13l9 -9" />
-                                                            <path d="M15 4h5v5" />
-                                                        </svg>Proses
-                                                    </a>
-                                                @else
-                                                    <a href="/presensi/{{ $d->kode_izin }}/batalkanizinsakit"
-                                                        class="btn btn-danger btn-sm">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>NO</th>
+                                                <th>Kode Izin</th>
+                                                <th>Tgl Izin</th>
+                                                <th>NIK</th>
+                                                <th>Nama</th>
+                                                <th>Jabatan</th>
+                                                <th>Status</th>
+                                                <th>Keterangan</th>
+                                                <th>Proses</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($izinsakit as $d)
+                                                <tr>
+                                                    <td>{{ $loop->iteration + $izinsakit->firstItem() - 1 }}</td>
+                                                    <td>{{ $d->kode_izin }}</td>
+                                                    <td>{{ date('d-m-Y', strtotime($d->tgl_izin_dari)) }} s/d
+                                                        {{ date('d-m-Y', strtotime($d->tgl_izin_sampai)) }}
+                                                    </td>
+                                                    <td>{{ $d->nik }}</td>
+                                                    <td>{{ $d->nama_lengkap }}</td>
+                                                    <td>{{ $d->jabatan }}</td>
+                                                    <td>{{ $d->status == 'i' ? 'Izin' : 'Sakit' }}</td>
+                                                    <td>{{ $d->keterangan }}</td>
+                                                    <td>
+                                                        @if ($d->status_approved == 1)
+                                                            <span class="badge bg-success text-light">Disetujui</span>
+                                                        @elseif($d->status_approved == 2)
+                                                            <span class="badge bg-danger text-light">Ditolak</span>
+                                                        @else
+                                                            <span class="badge bg-warning text-light">Pending</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if ($d->status_approved == 0)
+                                                            <a href="" class="approve btn btn-sm btn-primary"
+                                                                kode_izin="{{ $d->kode_izin }}">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    class="icon icon-tabler icon-tabler-external-link"
+                                                                    width="24" height="24" viewBox="0 0 24 24"
+                                                                    stroke-width="2" stroke="currentColor" fill="none"
+                                                                    stroke-linecap="round" stroke-linejoin="round">
+                                                                    <path stroke="none" d="M0 0h24v24H0z"
+                                                                        fill="none" />
+                                                                    <path
+                                                                        d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" />
+                                                                    <path d="M11 13l9 -9" />
+                                                                    <path d="M15 4h5v5" />
+                                                                </svg>Proses
+                                                            </a>
+                                                        @else
+                                                            <a href="/presensi/{{ $d->kode_izin }}/batalkanizinsakit"
+                                                                class="btn btn-danger btn-sm">
 
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="icon icon-tabler icon-tabler-square-rounded-minus"
-                                                            width="24" height="24" viewBox="0 0 24 24"
-                                                            stroke-width="2" stroke="currentColor" fill="none"
-                                                            stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                            <path d="M9 12h6" />
-                                                            <path
-                                                                d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z" />
-                                                        </svg>Batalkan
-                                                    </a>
-                                                @endif
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    class="icon icon-tabler icon-tabler-square-rounded-minus"
+                                                                    width="24" height="24" viewBox="0 0 24 24"
+                                                                    stroke-width="2" stroke="currentColor" fill="none"
+                                                                    stroke-linecap="round" stroke-linejoin="round">
+                                                                    <path stroke="none" d="M0 0h24v24H0z"
+                                                                        fill="none" />
+                                                                    <path d="M9 12h6" />
+                                                                    <path
+                                                                        d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z" />
+                                                                </svg>Batalkan
+                                                            </a>
+                                                        @endif
 
-                                            </td>
+                                                    </td>
 
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            {{ $izinsakit->links('vendor.pagination.bootstrap-5') }}
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    {{ $izinsakit->links('vendor.pagination.bootstrap-5') }}
+                                </div>
+                            </div>
+
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

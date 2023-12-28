@@ -63,6 +63,7 @@
                                                     <th>Jam Masuk</th>
                                                     <th>Akhir Jam Masuk</th>
                                                     <th>Jam Pulang</th>
+                                                    <th>Lintas Hari</th>
                                                     <th>Aksi</th>
                                                 </tr>
                                             </thead>
@@ -76,6 +77,36 @@
                                                         <td>{{ $d->jam_masuk }}</td>
                                                         <td>{{ $d->akhir_jam_masuk }}</td>
                                                         <td>{{ $d->jam_pulang }}</td>
+                                                        <td>
+                                                            @if ($d->lintashari == 1)
+                                                                <span class="badge bg-success text-light">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                        class="icon icon-tabler icon-tabler-check"
+                                                                        width="24" height="24" viewBox="0 0 24 24"
+                                                                        stroke-width="2" stroke="currentColor"
+                                                                        fill="none" stroke-linecap="round"
+                                                                        stroke-linejoin="round">
+                                                                        <path stroke="none" d="M0 0h24v24H0z"
+                                                                            fill="none" />
+                                                                        <path d="M5 12l5 5l10 -10" />
+                                                                    </svg>
+                                                                </span>
+                                                            @else
+                                                                <span class="badge bg-danger text-light">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                        class="icon icon-tabler icon-tabler-x"
+                                                                        width="24" height="24" viewBox="0 0 24 24"
+                                                                        stroke-width="2" stroke="currentColor"
+                                                                        fill="none" stroke-linecap="round"
+                                                                        stroke-linejoin="round">
+                                                                        <path stroke="none" d="M0 0h24v24H0z"
+                                                                            fill="none" />
+                                                                        <path d="M18 6l-12 12" />
+                                                                        <path d="M6 6l12 12" />
+                                                                    </svg>
+                                                                </span>
+                                                            @endif
+                                                        </td>
                                                         <td>
                                                             <div class="btn-group">
                                                                 <a href="#" class="edit btn btn-info btn-sm"
@@ -146,10 +177,10 @@
                             <div class="col-12">
                                 <div class="input-icon mb-3">
                                     <span class="input-icon-addon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-number"
-                                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-number" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M4 17v-10l7 10v-10" />
                                             <path d="M15 17h5" />
@@ -281,6 +312,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="div">
+                            <div class="col-12">
+                                <select class="form-select" name="lintashari" id="lintashari">
+                                    <option value="">Lintas Hari</option>
+                                    <option value="1">Aktif</option>
+                                    <option value="0">Tidak Aktif</option>
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="row mt-2">
                             <div class="col-12">
@@ -384,6 +424,7 @@
                 var jam_masuk = $("#jam_masuk").val();
                 var akhir_jam_masuk = $("#akhir_jam_masuk").val();
                 var jam_pulang = $("#jam_pulang").val();
+                var lintashari = $("#lintashari").val();
 
 
                 if (kode_jam_kerja == "") {
@@ -444,6 +485,16 @@
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         $("#jam_pulang").focus();
+                    });
+                    return false;
+                } else if (lintashari == "") {
+                    Swal.fire({
+                        title: 'Warning!',
+                        text: 'Lintas hari Harus Diisi',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        $("#lintashari").focus();
                     });
                     return false;
                 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -154,6 +155,21 @@ class KaryawanController extends Controller
             return Redirect::back()->with(['success' => 'Data Berhasil Dihapus']);
         } else {
             return Redirect::back()->with(['warning' => 'Data Gagal Dihapus']);
+        }
+    }
+
+    public function resetpassword($nik)
+    {
+        $nik = Crypt::decrypt($nik);
+        $password = Hash::make('123');
+        $reset = DB::table('karyawan')->where('nik', $nik)->update([
+            'password' => $password
+        ]);
+
+        if ($reset) {
+            return Redirect::back()->with(['success' => 'Password Berhasil Direset']);
+        } else {
+            return Redirect::back()->with(['warning' => 'Password Gagal Direset']);
         }
     }
 }

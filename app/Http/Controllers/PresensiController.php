@@ -14,9 +14,8 @@ use Illuminate\Support\Facades\Redirect;
 class PresensiController extends Controller
 {
 
-    public function gethari()
+    public function gethari($hari)
     {
-        $hari = date("D");
 
         switch ($hari) {
             case 'Sun':
@@ -49,14 +48,36 @@ class PresensiController extends Controller
 
     public function create()
     {
-        $hariini = date("Y-m-d");
-        //Mendapatkan nama hari pada dashboard absen karyawan 
-        $namahari = $this->gethari();
         $nik = Auth::guard('karyawan')->user()->nik;
+        $hariini = date("Y-m-d");
+        $jamsekarang = date("H:i");
+        // Mengecek absen lintas hari untuk absen pulang
+        $tgl_sebelumnya = date("Y-m-d", strtotime("-1 days", strtotime($hariini)));
+        $cekpresensi_sebelumnya = DB::table('presensi')
+            ->join('jam_kerja', 'presensi.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
+            ->where('tgl_presensi', $tgl_sebelumnya)
+            ->where('nik', $nik)
+            ->first();
+
+        // Mengecek kedatabase apakah lintas hari bernilai 1 atau null
+        $ceklintashari_presensi = $cekpresensi_sebelumnya != null ? $cekpresensi_sebelumnya->lintashari : 0;
+        // validasi bila bernilai lintas hari aktif maka tombol pulang masih aktif
+        if ($ceklintashari_presensi == 1) {
+            // Validasi bila jam sekarang kurang dari jam 8 masih bisa absen pulang, namun bila jam sekarang lebih dari jam 8 maka tombol kembali menjadi absen masuk
+            if ($jamsekarang < "08:00") {
+                $hariini = $tgl_sebelumnya;
+            }
+        }
+        //Mendapatkan nama hari pada dashboard absen karyawan 
+        if (isset($hariini) && strtotime($hariini)) {
+            $namahari = $this->gethari(date("D", strtotime($hariini)));
+        } else {
+            // Tindakan jika $hariini tidak valid
+            echo "Nilai \$hariini tidak valid!";
+        }
         //Mengecek karyawan tersebut di Departemen apa
         $kode_dept = Auth::guard('karyawan')->user()->kode_dept;
         $cek = DB::table('presensi')->where('tgl_presensi', $hariini)->where('nik', $nik)->count();
-        // $lok_kantor = DB::table('konfigurasi_lokasi')->where('id', 1)->first();
         $kode_cabang = Auth::guard('karyawan')->user()->kode_cabang;
         $lok_kantor = DB::table('cabang')->where('kode_cabang', $kode_cabang)->first();
 
@@ -81,17 +102,29 @@ class PresensiController extends Controller
         if ($jamkerja == null) {
             return view('presensi.notifjadwal');
         } else {
-            return view('presensi.create', compact('cek', 'lok_kantor', 'jamkerja'));
+            return view('presensi.create', compact('cek', 'lok_kantor', 'jamkerja', 'hariini'));
         }
     }
 
     public  function store(Request $request)
     {
         $nik = Auth::guard('karyawan')->user()->nik;
+        $hariini = date("Y-m-d");
+        $jamsekarang = date("H:i");
+        $tgl_sebelumnya = date("Y-m-d", strtotime("-1 days", strtotime($hariini)));
+        $cekpresensi_sebelumnya = DB::table('presensi')
+            ->join('jam_kerja', 'presensi.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
+            ->where('tgl_presensi', $tgl_sebelumnya)
+            ->where('nik', $nik)
+            ->first();
+
+        // Mengecek kedatabase apakah lintas hari bernilai 1 atau null
+        $ceklintashari_presensi = $cekpresensi_sebelumnya != null ? $cekpresensi_sebelumnya->lintashari : 0;
         $kode_cabang = Auth::guard('karyawan')->user()->kode_cabang;
         //Mengecek karyawan tersebut di Departemen apa
         $kode_dept = Auth::guard('karyawan')->user()->kode_dept;
-        $tgl_presensi = date("Y-m-d");
+        $tgl_presensi = $ceklintashari_presensi == 1 && $jamsekarang < "08:00" ? $tgl_sebelumnya : date("Y-m-d");
+
         $jam = date("H:i:s");
         $lok_kantor = DB::table('cabang')->where('kode_cabang', $kode_cabang)->first();
         $lok = explode(",", $lok_kantor->lokasi_cabang);
@@ -105,14 +138,19 @@ class PresensiController extends Controller
         $jarak = $this->distance($latitudekantor, $longitudekantor, $latitudeuser, $longitudeuser);
         $radius = round($jarak["meters"]);
 
-        //Cek jam kerja karyawan
-        $namahari = $this->gethari();
+        //Mendapatkan nama hari pada dashboard absen karyawan 
+        if (isset($hariini) && strtotime($hariini)) {
+            $namahari = $this->gethari(date("D", strtotime($hariini)));
+        } else {
+            // Tindakan jika $hariini tidak valid
+            echo "Nilai \$hariini tidak valid!";
+        }
+
         // Mendapatkan jam kerja perorangan sesuai dengan nik yang login
         $jamkerja = DB::table('konfigurasi_jamkerja')
             ->join('jam_kerja', 'konfigurasi_jamkerja.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
             ->where('nik', $nik)
             ->where('hari', $namahari)->first();
-
 
         if ($jamkerja == null) {
             // Mendapatkan jam kerja perdepartemen sesuai dengan nik yang login
@@ -124,13 +162,17 @@ class PresensiController extends Controller
                 ->where('hari', $namahari)->first();
         }
 
-        $cek = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->count();
+        // Validasi bila sudah absen pulang tidak bisa absen lagi
+        $presensi = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik);
+        $cek = $presensi->count();
+        $datapresensi = $presensi->first();
 
         if ($cek > 0) {
             $ket = "out";
         } else {
             $ket = "in";
         }
+
 
         $image = $request->image;
         $folderPath = "public/uploads/absensi/";
@@ -139,6 +181,13 @@ class PresensiController extends Controller
         $image_base64 = base64_decode($image_parts[1]);
         $fileName = $formatName . ".png";
         $file = $folderPath . $fileName;
+
+        // Mendeteksi jam pulang lintas waktu
+        $tgl_pulang = $ceklintashari_presensi == 1 ? date("Y-m-d", strtotime("+1 days", strtotime($tgl_presensi))) : $tgl_presensi;
+
+        $jam_pulang = $hariini . " " . $jam;
+        $jamkerja_pulang = $tgl_pulang . " " . $jamkerja->jam_pulang;
+
         $datakaryawan = DB::table('karyawan')->where('nik', $nik)->first();
         $no_hp = $datakaryawan->no_hp;
 
@@ -149,10 +198,11 @@ class PresensiController extends Controller
 
             // Membuat kondisi validasi absen sesuai dengan jam kerja
             if ($cek > 0) {
-
                 // Validasi untuk jam pulang
-                if ($jam < $jamkerja->jam_pulang) {
-                    echo "error|Maaf Belum Waktunya Jam Pulang / Anda sedang IZIN|in";
+                if ($jam_pulang < $jamkerja_pulang) {
+                    echo "error|Maaf Belum Waktunya Jam Pulang / Anda sedang IZIN|out";
+                } else if (!empty($datapresensi->jam_out)) {
+                    echo "error|Anda sudah melakukan Absen pulang sebelumnya|out";
                 } else {
                     $data_pulang = [
                         'jam_out' => $jam,
@@ -190,11 +240,11 @@ class PresensiController extends Controller
             } else {
                 // Validasi waktu awal jam masuk belum
                 if ($jam < $jamkerja->awal_jam_masuk) {
-                    echo "error|Maaf Belum Waktunya Melakukan Presensi|in";
+                    echo "error|Maaf Belum Waktunya Melakukan Presensi|out";
 
                     // Validasi akhir jam masuk
                 } else if ($jam > $jamkerja->akhir_jam_masuk) {
-                    echo "error|Maaf Waktu Untuk Presensi Sudah Habis|in";
+                    echo "error|Maaf Waktu Untuk Presensi Sudah Habis|out";
                 } else {
                     $data = [
                         'nik' => $nik,
@@ -210,11 +260,8 @@ class PresensiController extends Controller
                     if ($simpan) {
                         echo "success|Selamat Bekerja|in";
 
-
-
                         // API WA Gateway untuk mengirimkan pesan ke WA Karyawan
                         $curl = curl_init();
-
                         curl_setopt_array($curl, array(
                             CURLOPT_URL => 'https://wag.masjidagungalazhar.com/send-message',
                             CURLOPT_RETURNTRANSFER => true,
@@ -325,11 +372,16 @@ class PresensiController extends Controller
         $nik = Auth::guard('karyawan')->user()->nik;
 
         $histori = DB::table('presensi')
+            ->select('presensi.*', 'keterangan', 'jam_kerja.*', 'doc_sid', 'nama_cuti')
+            ->leftJoin('jam_kerja', 'presensi.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
+            ->leftJoin('pengajuan_izin', 'presensi.kode_izin', '=', 'pengajuan_izin.kode_izin')
+            ->leftJoin('pengajuan_cuti', 'pengajuan_izin.kode_cuti', '=', 'pengajuan_cuti.kode_cuti')
+            ->where('presensi.nik', $nik)
             ->whereRaw('MONTH(tgl_presensi)="' . $bulan . '"')
             ->whereRaw('YEAR(tgl_presensi)="' . $tahun . '"')
-            ->where('nik', $nik)
             ->orderBy('tgl_presensi')
             ->get();
+
 
         return view('presensi.gethistori', compact('histori'));
     }

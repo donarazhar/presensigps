@@ -12,6 +12,10 @@
         .logout:hover {
             color: white;
         }
+
+        .card {
+            border: 1px solid rgb(184, 184, 184)
+        }
     </style>
     <div class="section" id="user-section">
         <a href="/proseslogout" class="logout"><ion-icon name="exit-outline"></ion-icon></a>
@@ -154,9 +158,10 @@
                     <div class="card">
                         <div class="card-body text-center" style="padding: 12px 12px !important; line-height: 0.8rem">
                             <span class="badge bg-success"
-                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekapizin->jmlizin }}</span>
+                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekappresensi->jmlizin }}</span>
                             <ion-icon name="newspaper-outline" style="font-size: 1.6rem" class="text-success">
-                            </ion-icon> <span style="font-size: 0.8rem; font-weight:500">Izin</span>
+                            </ion-icon> <span style="font-size: 0.8rem; font-weight:500">
+                                Izin</span>
                         </div>
                     </div>
                 </div>
@@ -164,7 +169,7 @@
                     <div class="card">
                         <div class="card-body text-center" style="padding: 12px 12px !important;line-height: 0.8rem">
                             <span class="badge bg-warning"
-                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekapizin->jmlsakit }}</span>
+                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekappresensi->jmlsakit }}</span>
                             <ion-icon name="medkit-outline" style="font-size: 1.6rem" class="text-warning">
                             </ion-icon> <span style="font-size: 0.8rem; font-weight:500">Sakit</span>
                         </div>
@@ -174,9 +179,9 @@
                     <div class="card">
                         <div class="card-body text-center" style="padding: 12px 12px !important;line-height: 0.8rem">
                             <span class="badge bg-danger"
-                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekappresensi->jmlterlambat }}</span>
-                            <ion-icon name="alarm-outline" style="font-size: 1.6rem" class="text-danger">
-                            </ion-icon> <span style="font-size: 0.8rem; font-weight:500">Telat</span>
+                                style="position:absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekappresensi->jmlcuti }}</span>
+                            <ion-icon name="calendar-outline" style="font-size: 1.6rem" class="text-danger">
+                            </ion-icon> <span style="font-size: 0.8rem; font-weight:500">Cuti</span>
                         </div>
                     </div>
                 </div>
@@ -337,19 +342,60 @@
                 <div class="tab-pane fade" id="profile" role="tabpanel">
                     <ul class="listview image-listview">
                         @foreach ($leaderboard as $e)
-                            <li>
-                                <div class="item">
-                                    <img src="assets/img/sample/avatar/avatar1.jpg" alt="" class="image">
-                                    <div class="in">
-                                        <div>
-                                            <b>{{ $e->nama_lengkap }}</b><br>
-                                            <small class="text-muted">{{ $e->jabatan }}</small>
+                            @if ($e->status == 'h')
+                                <li>
+                                    <div class="item">
+                                        <img src="assets/img/sample/avatar/avatar1.jpg" alt="" class="image">
+                                        <div class="in">
+                                            <div>
+                                                <b>{{ $e->nama_lengkap }}</b><br>
+                                                <small class="text-muted">{{ $e->jabatan }}</small>
+                                            </div>
+                                            <span class="badge {{ $e->jam_in < '07:00' ? 'bg-success' : 'bg-danger' }}">
+                                                {{ $e->jam_in }}</span>
                                         </div>
-                                        <span class="badge {{ $e->jam_in < '07:00' ? 'bg-success' : 'bg-danger' }}">
-                                            {{ $e->jam_in }}</span>
                                     </div>
-                                </div>
-                            </li>
+                                </li>
+                            @elseif ($e->status == 'i')
+                                <li>
+                                    <div class="item">
+                                        <img src="assets/img/sample/avatar/avatar1.jpg" alt="" class="image">
+                                        <div class="in">
+                                            <div>
+                                                <b>{{ $e->nama_lengkap }}</b><br>
+                                                <small class="text-muted">{{ $e->jabatan }}</small>
+                                            </div>
+                                            <span class="badge bg-warning">Izin</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            @elseif ($e->status == 's')
+                                <li>
+                                    <div class="item">
+                                        <img src="assets/img/sample/avatar/avatar1.jpg" alt="" class="image">
+                                        <div class="in">
+                                            <div>
+                                                <b>{{ $e->nama_lengkap }}</b><br>
+                                                <small class="text-muted">{{ $e->jabatan }}</small>
+                                            </div>
+                                            <span class="badge bg-danger">Sakit</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            @elseif ($e->status == 'c')
+                                <li>
+                                    <div class="item">
+                                        <img src="assets/img/sample/avatar/avatar1.jpg" alt="" class="image">
+                                        <div class="in">
+                                            <div>
+                                                <b>{{ $e->nama_lengkap }}</b><br>
+                                                <small class="text-muted">{{ $e->jabatan }}</small>
+                                            </div>
+                                            <span class="badge bg-primary">Cuti</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            @endif
                         @endforeach
                     </ul>
                 </div>

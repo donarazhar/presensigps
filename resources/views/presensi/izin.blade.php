@@ -14,6 +14,7 @@
         .historicontent {
             display: flex;
             gap: 1px;
+            margin-top: 15px;
         }
 
         .datapresensi {
@@ -23,6 +24,10 @@
         .status {
             position: absolute;
             right: 20px;
+        }
+
+        .card {
+            border: 1px solid rgb(184, 184, 184)
         }
     </style>
 @endsection
@@ -84,14 +89,14 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <button class="btn btn-primary w-100">Cari Data</button>
+                        <button class="btn btn-primary w-100 mb-1">Cari Data</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" style="position: fixed; width:100%; margin: auto; overflow-y: scroll; height: 430px;">
         <div class="col">
             @foreach ($dataizin as $d)
                 @php
