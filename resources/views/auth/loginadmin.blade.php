@@ -104,7 +104,13 @@
 
                     </div>
                 </div>
+<<<<<<< HEAD
 
+=======
+                {{-- <div class="col-lg d-none d-lg-block">
+                    <img src="{{ asset('assets/img/log.svg') }}" height="300" class="d-block mx-auto" alt="">
+                </div> --}}
+>>>>>>> 2c753fe572c762feeab68fdc59f298db23d1f7c4
             </div>
         </div>
     </div>

@@ -294,7 +294,11 @@
                                         <path d="M19 16v6" />
                                         <path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
                                     </svg>
+<<<<<<< HEAD
                                     Data Karyawan
+=======
+                                    Data Kantor YPIA
+>>>>>>> 2c753fe572c762feeab68fdc59f298db23d1f7c4
                                 </a>
 
 

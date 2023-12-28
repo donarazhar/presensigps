@@ -1,10 +1,18 @@
 /* Made with love by Mutiullah Samim*/
 
+<<<<<<< HEAD
 @import url("../css/css.css");
 
 html,
 body {
     background-image: url("../img/Masjid-Agung-Al-Azhar-scaled.jpg");
+=======
+@import url("https://fonts.googleapis.com/css?family=Numans");
+
+html,
+body {
+    background-image: url("https://minanews.net/wp-content/uploads/2023/02/Masjid-Agung-Al-Azhar-scaled.jpg");
+>>>>>>> 2c753fe572c762feeab68fdc59f298db23d1f7c4
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
