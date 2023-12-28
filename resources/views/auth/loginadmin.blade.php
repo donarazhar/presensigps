@@ -13,7 +13,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>E-Presensi - Sign in</title>
+    <link rel="shortcut icon" href="https://siap.al-azhar.id/upload/favicon.ico" type="image/x-icon" />
+    <title>E-MAA V.2.0 - Presensi</title>
     <!-- CSS files -->
     <link href="{{ asset('tabler/dist/css/tabler.min.css?1692870487') }}" rel="stylesheet" />
     <link href="{{ asset('tabler/dist/css/tabler-flags.min.css?1692870487') }}" rel="stylesheet" />
@@ -29,6 +30,12 @@
 
         body {
             font-feature-settings: "cv03", "cv04", "cv11";
+            background-image: url("https://minanews.net/wp-content/uploads/2023/02/Masjid-Agung-Al-Azhar-scaled.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100%;
+            font-family: "Numans", sans-serif;
         }
     </style>
 </head>
@@ -42,7 +49,7 @@
                     <div class="container-tight">
                         <div class="text-center mb-4">
                             <a href="." class="navbar-brand navbar-brand-autodark"><img
-                                    src="{{ asset('tabler/static/admin.svg') }}" height="45" alt=""></a>
+                                    src="{{ asset('tabler/static/admin.svg') }}" height="60" alt=""></a>
                         </div>
                         <div class="card card-md">
                             <div class="card-body">
@@ -100,10 +107,9 @@
 
                     </div>
                 </div>
-                <div class="col-lg d-none d-lg-block">
-                    <img src="{{ asset('tabler/static/illustrations/undraw_secure_login_pdn4.svg') }}" height="300"
-                        class="d-block mx-auto" alt="">
-                </div>
+                {{-- <div class="col-lg d-none d-lg-block">
+                    <img src="{{ asset('assets/img/log.svg') }}" height="300" class="d-block mx-auto" alt="">
+                </div> --}}
             </div>
         </div>
     </div>

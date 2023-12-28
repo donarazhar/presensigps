@@ -124,7 +124,10 @@ class PresensiController extends Controller
                 ->where('hari', $namahari)->first();
         }
 
-        $cek = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->count();
+        // Validasi bila sudah absen pulang tidak bisa absen lagi
+        $presensi = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik);
+        $cek = $presensi->count();
+        $datapresensi = $presensi->first();
 
         if ($cek > 0) {
             $ket = "out";
@@ -152,7 +155,9 @@ class PresensiController extends Controller
 
                 // Validasi untuk jam pulang
                 if ($jam < $jamkerja->jam_pulang) {
-                    echo "error|Maaf Belum Waktunya Jam Pulang / Anda sedang IZIN|in";
+                    echo "error|Maaf Belum Waktunya Jam Pulang / Anda sedang IZIN|out";
+                } else if (!empty($datapresensi->jam_out)) {
+                    echo "error|Anda sudah melakukan Absen pulang sebelumnya|out";
                 } else {
                     $data_pulang = [
                         'jam_out' => $jam,
@@ -190,11 +195,11 @@ class PresensiController extends Controller
             } else {
                 // Validasi waktu awal jam masuk belum
                 if ($jam < $jamkerja->awal_jam_masuk) {
-                    echo "error|Maaf Belum Waktunya Melakukan Presensi|in";
+                    echo "error|Maaf Belum Waktunya Melakukan Presensi|out";
 
                     // Validasi akhir jam masuk
                 } else if ($jam > $jamkerja->akhir_jam_masuk) {
-                    echo "error|Maaf Waktu Untuk Presensi Sudah Habis|in";
+                    echo "error|Maaf Waktu Untuk Presensi Sudah Habis|out";
                 } else {
                     $data = [
                         'nik' => $nik,
@@ -210,11 +215,8 @@ class PresensiController extends Controller
                     if ($simpan) {
                         echo "success|Selamat Bekerja|in";
 
-
-
                         // API WA Gateway untuk mengirimkan pesan ke WA Karyawan
                         $curl = curl_init();
-
                         curl_setopt_array($curl, array(
                             CURLOPT_URL => 'https://wag.masjidagungalazhar.com/send-message',
                             CURLOPT_RETURNTRANSFER => true,
@@ -325,11 +327,16 @@ class PresensiController extends Controller
         $nik = Auth::guard('karyawan')->user()->nik;
 
         $histori = DB::table('presensi')
+            ->select('presensi.*', 'keterangan', 'jam_kerja.*', 'doc_sid', 'nama_cuti')
+            ->leftJoin('jam_kerja', 'presensi.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
+            ->leftJoin('pengajuan_izin', 'presensi.kode_izin', '=', 'pengajuan_izin.kode_izin')
+            ->leftJoin('pengajuan_cuti', 'pengajuan_izin.kode_cuti', '=', 'pengajuan_cuti.kode_cuti')
+            ->where('presensi.nik', $nik)
             ->whereRaw('MONTH(tgl_presensi)="' . $bulan . '"')
             ->whereRaw('YEAR(tgl_presensi)="' . $tahun . '"')
-            ->where('nik', $nik)
             ->orderBy('tgl_presensi')
             ->get();
+
 
         return view('presensi.gethistori', compact('histori'));
     }

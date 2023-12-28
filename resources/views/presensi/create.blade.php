@@ -43,6 +43,7 @@
             color: #fff;
             font-size: 11px;
             text-align: right;
+            line-height: 1rem;
             margin-top: 0;
             margin-bottom: 0;
         }
@@ -131,7 +132,7 @@
         // Membuat UI webcam
         Webcam.set({
             height: 480,
-            width: 640,
+            width: 440,
             image_format: 'jpeg',
             jpeg_quality: 80
 
@@ -171,7 +172,6 @@
             }).addTo(map);
 
         }
-
 
 
         function errorCallback() {

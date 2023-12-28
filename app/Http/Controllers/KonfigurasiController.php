@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Setjamkerja;
 use App\Models\Setjamkerjadeptdetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use PhpParser\Node\Stmt\TryCatch;
@@ -52,6 +53,7 @@ class KonfigurasiController extends Controller
         $jam_masuk = $request->jam_masuk;
         $akhir_jam_masuk = $request->akhir_jam_masuk;
         $jam_pulang = $request->jam_pulang;
+        $lintashari = $request->lintashari;
 
 
         $data = [
@@ -60,6 +62,7 @@ class KonfigurasiController extends Controller
             'awal_jam_masuk' => $awal_jam_masuk,
             'jam_masuk' => $jam_masuk,
             'akhir_jam_masuk' => $akhir_jam_masuk,
+            'lintashari' => $lintashari,
             'jam_pulang' => $jam_pulang
         ];
         try {
@@ -87,14 +90,15 @@ class KonfigurasiController extends Controller
         $jam_masuk = $request->jam_masuk;
         $akhir_jam_masuk = $request->akhir_jam_masuk;
         $jam_pulang = $request->jam_pulang;
+        $lintashari = $request->lintashari;
 
         $data = [
-
             'nama_jam_kerja' => $nama_jam_kerja,
             'awal_jam_masuk' => $awal_jam_masuk,
             'jam_masuk' => $jam_masuk,
             'akhir_jam_masuk' => $akhir_jam_masuk,
-            'jam_pulang' => $jam_pulang
+            'jam_pulang' => $jam_pulang,
+            'lintashari' => $lintashari
         ];
 
         try {
@@ -124,6 +128,7 @@ class KonfigurasiController extends Controller
 
     public function setjamkerja($nik, Request $request)
     {
+        $nik = Crypt::decrypt($nik);
         $karyawan = DB::table('karyawan')->where('nik', $nik)->first();
         $jamkerja = DB::table('jam_kerja')->orderBy('nama_jam_kerja')->get();
         $cekjamkerja = DB::table('konfigurasi_jamkerja')->where('nik', $nik)->count();

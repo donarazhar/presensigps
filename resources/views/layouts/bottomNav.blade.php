@@ -23,8 +23,7 @@
     </a>
     <a href="/presensi/izin" class="item {{ request()->is('presensi/izin') ? 'active ' : '' }}">
         <div class="col">
-            <ion-icon name="calendar" role="img" class="md hydrated"
-                aria-label="document text outline"></ion-icon>
+            <ion-icon name="calendar" role="img" class="md hydrated" aria-label="document text outline"></ion-icon>
             <strong>Izin</strong>
         </div>
     </a>

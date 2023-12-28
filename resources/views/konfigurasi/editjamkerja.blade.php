@@ -134,6 +134,16 @@
         </div>
     </div>
 
+    <div class="div">
+        <div class="col-12">
+            <select class="form-select" name="lintashari" id="lintashari">
+                <option value="">Lintas Hari</option>
+                <option value="1" {{ $jam_kerja->lintashari == 1 ? 'selected' : '' }}>Aktif</option>
+                <option value="0" {{ $jam_kerja->lintashari == 0 ? 'selected' : '' }}>Tidak Aktif</option>
+            </select>
+        </div>
+    </div>
+
     <div class="row mt-2">
         <div class="col-12">
             <div class="form-group">
@@ -150,8 +160,12 @@
         </div>
     </div>
 </form>
+
 <script>
     $(function() {
+
+        // Validasi text inputan
+        $("#awal_jam_masuk, #jam_masuk, #akhir_jam_masuk, #jam_pulang").mask("00:00");
 
         $("#frmJKedit").submit(function() {
             var kode_jam_kerja = $("#frmJKedit").find("#kode_jam_kerja").val();
@@ -220,6 +234,16 @@
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     $("#jam_pulang").focus();
+                });
+                return false;
+            } else if (lintashari == "") {
+                Swal.fire({
+                    title: 'Warning!',
+                    text: 'Jam Pulang Harus Diisi',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    $("#lintashari").focus();
                 });
                 return false;
             }
