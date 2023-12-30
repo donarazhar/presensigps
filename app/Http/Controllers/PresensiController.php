@@ -199,11 +199,7 @@ class PresensiController extends Controller
             // Membuat kondisi validasi absen sesuai dengan jam kerja
             if ($cek > 0) {
                 // Validasi untuk jam pulang
-<<<<<<< HEAD
                 if ($jam_pulang < $jamkerja_pulang) {
-=======
-                if ($jam < $jamkerja->jam_pulang) {
->>>>>>> 2c753fe572c762feeab68fdc59f298db23d1f7c4
                     echo "error|Maaf Belum Waktunya Jam Pulang / Anda sedang IZIN|out";
                 } else if (!empty($datapresensi->jam_out)) {
                     echo "error|Anda sudah melakukan Absen pulang sebelumnya|out";
