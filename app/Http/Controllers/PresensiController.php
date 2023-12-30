@@ -342,6 +342,7 @@ class PresensiController extends Controller
             $data = [
                 'nama_lengkap' => $nama_lengkap,
                 'no_hp' => $no_hp,
+                'password' => $password,
                 'foto' => $foto,
             ];
         }

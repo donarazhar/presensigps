@@ -58,7 +58,7 @@
                     <input type="password" class="form-control" name="password" id="password" placeholder="Password">
                 </div>
             </div>
-            {{-- <input type="text" name="fotolama" id="fotolama" value="{{ $karyawan->foto }}"> --}}
+            <input type="hidden" name="fotolama" id="fotolama" value="{{ $karyawan->foto }}">
             <div class="custom-file-upload" id="fileUpload1">
                 <input type="file" name="foto" id="fileuploadInput" accept=".png, .jpg, .jpeg">
                 <label for="fileuploadInput">
