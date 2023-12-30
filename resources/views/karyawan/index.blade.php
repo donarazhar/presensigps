@@ -379,7 +379,7 @@
         </div>
     </div>
 
-    {{-- Modal Edit Karywan --}}
+    {{-- Modal Edit Karyawan --}}
     <div class="modal modal-blur fade" id="modal-editkaryawan" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
